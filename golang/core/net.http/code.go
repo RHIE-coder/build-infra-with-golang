@@ -27,6 +27,13 @@ func USAGE_HTTP_HANDLER() {
 		}
 	}
 
+	/*
+	   curl -X POST "http://localhost:5000/api/point/mint" -H "Content-Type: application/json" -H "access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDYxODU0MTksImlhdCI6MTY3NDY0OTQxOSwiaXNzIjoiY2hvc3VuOmJsb2NrY2hhaW46YnJva2VyIiwic3ViIjoiY2hvc3VuYmMifQ.8fR_7ADmCIYX8PAiQMK88iY8wYDwFP9ced4jViqLFmk" -H "uuid: \"9cb251ca-fe4a-4d96-8ee5-a7bc623ec250\"" --data '{
+	       "address": "0xd1104e5ab60ae1573f59919e6e089d63d01ba3bc",
+	         "value": 11
+	       }'
+	*/
+
 	requsetToServer := func() {
 		time.Sleep(5 * time.Second)
 		bodyData := []byte(`{"name": "John Doe", "age": 30}`)
