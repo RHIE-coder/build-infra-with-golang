@@ -1,17 +1,3 @@
-# tmux
-
- - 리눅스 터미널 분할 툴
-
-## [ Install ]
-
-```sh
-sudo apt install tmux
-```
-## [ Structure ]
-
-
-### - TMUX Server
-
 ---
 Sessions:
   Window 0:
@@ -24,11 +10,20 @@ Sessions:
     - Pane
 ---
 
-## [ Core Usage ]
+# tmux
 
-### - Prefix 단축키: `CTRL + b`
+ - 리눅스 터미널 분할 툴
 
-### - Kill
+## [ Install ]
+
+```sh
+sudo apt install tmux
+```
+## [ Structure ]
+
+### - TMUX Server
+
+ - Kill
 
 ```sh
 tmux kill-server
