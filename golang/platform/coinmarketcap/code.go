@@ -75,9 +75,16 @@ func main() {
 	// 	URL:    "/v1/exchange/map",
 	// }
 
+	// requester := &utils.Requester{
+	// 	Method: fasthttp.MethodGet,
+	// 	URL:    "/v1/exchange/assets?id=270",
+	// }
+
+	// param := "publish"
+	param := "4647,1027"
 	requester := &utils.Requester{
 		Method: fasthttp.MethodGet,
-		URL:    "/v1/exchange/assets?id=270",
+		URL:    "/v2/cryptocurrency/quotes/latest?id=" + param + "&convert_id=2798",
 	}
 
 	client.Dial(requester)

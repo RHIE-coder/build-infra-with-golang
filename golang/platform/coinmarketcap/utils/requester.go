@@ -74,13 +74,16 @@ func (client *FasthttpClient) Dial(requester *Requester) {
 
 	var resData map[string]interface{}
 	json.Unmarshal(resp.Body(), &resData)
+
+	fmt.Println(ParseResponseData(resp.Body()))
+
 	JsonIndent2, err := json.MarshalIndent(resData, "", "  ")
 
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(string(JsonIndent2))
+	// fmt.Println(string(JsonIndent2))
 
 	// 파일 생성 및 쓰기
 	file, err := os.Create("result.json")
