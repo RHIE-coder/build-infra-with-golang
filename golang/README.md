@@ -18,12 +18,12 @@
  - GET `tar.gz`
 
 ```bash
-wget https://go.dev/dl/go1.18.3.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.20.2.linux-amd64.tar.gz
 ```
 
 1. Remove any previous Go installation by deleting the /usr/local/go folder (if it exists), then extract the archive you just downloaded into /usr/local, creating a fresh Go tree in /usr/local/go:
 ```bash
-rm -rf /usr/local/go && tar -C /usr/local -xzf go1.18.3.linux-amd64.tar.gz
+rm -rf /usr/local/go && tar -C /usr/local -xzf go1.20.2.linux-amd64.tar.gz
 ```
 (You may need to run the command as root or through sudo).
 
