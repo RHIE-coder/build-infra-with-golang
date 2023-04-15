@@ -90,4 +90,16 @@ z           Toggle zoom state of the current pane.
 C-Up, C-Down
 C-Left, C-Right
             Resize the current pane in steps of one cell.
+M-1 to M-5  Arrange panes in one of the five preset layouts: even-horizontal, even-vertical, main-horizontal,
+                       main-vertical, or tiled.
+           Space       Arrange the current window in the next preset layout.
+           M-n         Move to the next window with a bell or activity marker.
+           M-o         Rotate the panes in the current window backwards.
+           M-p         Move to the previous window with a bell or activity marker.
+           C-Up, C-Down
+           C-Left, C-Right
+                       Resize the current pane in steps of one cell.
+           M-Up, M-Down
+           M-Left, M-Right
+                       Resize the current pane in steps of five cells.
 ```
