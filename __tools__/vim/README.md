@@ -32,7 +32,7 @@ set wrap                " window 크기가 부족하면 행 다보이게 하기(
 set nowrapscan          " 검색할 때 문서의 끝에서 처음으로 안돌아감
 set backspace=eol,start,indent 
     "  줄의 끝, 시작, 들여쓰기에서 백스페이스시 이전줄로
-colorscheme morning     " color theme 설정
+colorscheme koehler     " color theme 설정
 ```
 
 # Color Theme List

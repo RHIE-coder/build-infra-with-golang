@@ -86,3 +86,14 @@ cd $(cat ~/cpfs)
 끝...
 
 <br><br><br><br><br>
+
+# DNS 관련 명령어
+
+## [내 Public IP 알아내기]
+
+```sh
+dig +short myip.opendns.com @resolver1.opendns.com
+curl -s https://checkip.amazonaws.com
+```
+
+<br><br><br><br><br>
