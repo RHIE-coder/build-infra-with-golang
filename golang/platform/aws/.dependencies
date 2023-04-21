@@ -1,0 +1,5 @@
+[ CORE ]
+github.com/aws/aws-sdk-go
+
+go get -u github.com/valyala/fasthttp
+go get -u github.com/joho/godotenv

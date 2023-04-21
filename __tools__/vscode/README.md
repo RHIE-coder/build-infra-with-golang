@@ -5,3 +5,8 @@
 
 
 # 유용한 확장 프로그램
+
+
+dig +short myip.opendns.com @resolver1.opendns.com
+
+curl -s https://checkip.amazonaws.com
