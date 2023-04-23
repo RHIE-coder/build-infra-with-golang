@@ -41,3 +41,17 @@ filetype plugin indent on    " required
 " see :h vundle for more details or wiki for FAQ
 " Put your non-Plugin stuff after this line
 ```
+
+## [Useful]
+
+```vim
+Plugin 'preservim/nerdtree'        " 폴더 구조 Netrw보다 편함
+Plugin 'vim-airline/vim-airline'   " 상태바
+Plugin 'ctrlpvim/ctrlp.vim'        " 파일 찾기
+Plugin 'Syntastic'                 " 코드 문법 체크
+
+" 각 언어에 맞는 개발툴 
+Plugin 'fatih/vim-go'              " Example(golang)
+```
+
+ - 더 많은 플러그인 [https://vimawesome.com/]
