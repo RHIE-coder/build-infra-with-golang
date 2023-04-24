@@ -1,0 +1,5 @@
+[ Core ]
+go get github.com/ethereum/go-ethereum
+
+[ Module ]
+go get -u github.com/joho/godotenv
