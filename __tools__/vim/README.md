@@ -52,4 +52,3 @@ colorscheme koehler     " color theme 설정
 # 유용한 단축키
 
  - `@:` 이전 커맨드 모드 실행
- - `q:` 명령어 히스토리 보기 `[ENTER]`

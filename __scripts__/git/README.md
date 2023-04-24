@@ -26,3 +26,13 @@ git commit --amend --reset-author
 ```
 git commit --amend --author="Author Name <email@example.com>"
 ```
+
+
+# Pull
+
+## [ 원격 브랜치에 대하여 로컬 브랜치 생성하기 ]
+
+```
+git switch origin_branch
+git checkout --track origin/origin_branch
+```
