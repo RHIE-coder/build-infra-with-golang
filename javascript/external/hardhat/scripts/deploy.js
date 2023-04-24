@@ -35,7 +35,8 @@ async function SimpleStorage() {
 async function main() {
 
   /* 0xE36AE64156db78dd4797864E9A2f3C1C40625BF3 */
-  // SimpleStorage is deployed: 0x39c44CD8432e45B1bA8EDe1Ca6f5020ea04438E0
+  // (deprecated)SimpleStorage is deployed: 0x39c44CD8432e45B1bA8EDe1Ca6f5020ea04438E0
+  // SimpleStorage is deployed: 0xd104742d402E2d5a7B77baA6d811994F58818BAA
   await SimpleStorage()
 }
 

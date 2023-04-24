@@ -14,6 +14,7 @@ const INFURA_API_KEY = process.env.INFURA_API_KEY;
 // go to Account Details > Export Private Key
 // Beware: NEVER put real Ether into testing accounts
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
+console.log(`https://${NETWORK}.infura.io/v3/${INFURA_API_KEY}`)
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
