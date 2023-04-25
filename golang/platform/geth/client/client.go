@@ -5,6 +5,8 @@ import (
 	"golang/platform/geth/client/utils"
 	"log"
 
+	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
@@ -76,4 +78,24 @@ func (client *EthereumClient) SuggestGasPrice() string {
 		log.Fatal(err.Error())
 	}
 	return utils.ConvertBigintToString(gasPrice)
+}
+
+func (client *EthereumClient) SendTransaction(tx *types.Transaction) error {
+	return client.dialer.SendTransaction(context.Background(), tx)
+}
+
+func (client *EthereumClient) EstimateGas(msg *ethereum.CallMsg) string {
+	expectedGas, err := client.dialer.EstimateGas(context.Background(), *msg)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return utils.ConvertUint64ToString(expectedGas)
+}
+
+func (client *EthereumClient) CallContract(msg *ethereum.CallMsg) []byte {
+	callData, err := client.dialer.CallContract(context.Background(), *msg, nil)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	return callData
 }
