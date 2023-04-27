@@ -1,3 +1,4 @@
+# Meaningful Variable Names
  - `Resolver` 
  - `Handler` 
  - `Factory`
@@ -27,3 +28,18 @@
  - `Source`
  - `Iterator`
  - `Query`
+
+# Meaningless Variable Name
+
+ - foo
+ - bar
+ - baz
+ - quux
+ - corge
+ - grault
+ - garply
+ - waldo
+ - fred
+ - plugh
+ - xyzzy
+ - thud

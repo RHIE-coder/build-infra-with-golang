@@ -83,7 +83,7 @@ type Person = {
     age: number
 }
 
-function toString(person: Person): string { // type alias
+function toStr(person: Person): string { // type alias
     return `${person.name} :: ${person.age}`
 }
 
@@ -167,6 +167,69 @@ type UserData = {
 }
 
 // const jenny: UserData= {name:"jenny"} // ERROR
-const jenny = {name:"jenny"} as UserData // only check in compilation(TS->JS), no effect to runtime environmnet
-
 // const num = 100 as string // ERROR
+// type assertion은 컴파일 시에만 체크가 된다
+// 그러나, 아래는 의도한 바와 다르게 컴파일이 성공적으로 되므로, 런타임 때 에러가 일어날 수도 있다.
+const jenny = {name:"jenny"} as UserData // 방법 1
+const owen = <UserData>{name:"owen"} // 방법2
+// 그러면 왜 type assertion이 필요할까?
+
+class Machine {}
+class Calculator extends Machine { calculate(){} }
+class Scanner extends Machine { scan(){} }
+
+function operate(machine:Machine): void {
+    const machineName:string = machine.constructor.name
+
+    if(machineName === "Calculator") {
+        // machine.calculate() // ERROR
+        (machine as Calculator).calculate()
+        return
+    } 
+
+    if(machineName === "Scanner") {
+        // machine.scan() // ERROR
+        (machine as Scanner).scan()
+        return
+    }
+
+    console.log("untyped machine")
+    return
+}
+
+/* literal type */
+let unliteral = "Hello World"
+unliteral = "can change. it is string type."
+
+const literal = "Hello World"
+// literal = "cannot change. it is 'Hello World' type"
+
+let foo1: "Hello World" = "Hello World"
+let foo2: 1 | 2 | 3
+foo2 = 2
+// foo2 = 4 // ERROR
+
+/* literal interface */
+// TypeScript assumes that the properties of that object might change values later.
+const foo3 = { counter: 0 }; // counter is number type
+if (true) {
+    foo3.counter = 1;
+}
+
+function bar(url:string, method: "GET" | "POST") {}
+
+const foo4 = { url: "https://example.com", method: "GET" }; // url and method are string
+// bar(foo4.url, foo4.method); // ERROR(method is "GET" type)
+bar(foo4.url, foo4.method as "GET")
+
+// url is "https://example.com" type
+// method is "GET" type
+// to convert the entire object to be type literals:
+const foo5 = { url: "https://example.com", method: "GET" } as const 
+bar(foo5.url, foo5.method)
+
+/* Non-null Assertion Operator `!` */
+function liveDangerously(x?: number | null) {
+//   console.log(x.toFixed()); // ERROR: 'x' is possibly 'null' or 'undefined'
+  console.log(x!.toFixed()) 
+}
