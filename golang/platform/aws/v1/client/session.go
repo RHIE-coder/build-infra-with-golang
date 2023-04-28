@@ -11,7 +11,6 @@ import (
 
 func NewSession(accessKey string, secretKey string, region string) *session.Session {
 	sess, err := session.NewSession(&aws.Config{
-		// Region:      aws.String("ap-northeast-2"),
 		Region:      aws.String(region),
 		Credentials: credentials.NewStaticCredentials(accessKey, secretKey, ""),
 		HTTPClient:  &http.Client{},

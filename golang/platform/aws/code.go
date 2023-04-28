@@ -1,31 +1,67 @@
 package main
 
 import (
+	"fmt"
 	"golang/platform/aws/v1/client"
 	"golang/platform/aws/v1/dynamodb"
 	"log"
 	"os"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/joho/godotenv"
 )
 
-func READ_ENV_FILE() {
+func LoadEnvFile() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 }
 
+func update(dataSource *dynamodb.DynamoDB) {
+	// UpdateItemInput 객체 생성
+	expr, err := expression.NewBuilder().
+		WithUpdate(expression.Set(
+			expression.Name("Active"), expression.Value(true),
+		)).
+		Build()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	input := &dataSource.client.UpdateItemInput{
+		TableName: aws.String("BC_AUTH"), // 테이블 이름
+		Key: map[string]*dynamodb.AttributeValue{
+			"accessToken": {
+				S: aws.String("myAccessToken"), // 파티션 키 값
+			},
+			"refreshToken": {
+				S: aws.String("myRefreshToken"), // 정렬 키 값
+			},
+		},
+		ExpressionAttributeNames:  expr.Names(),
+		ExpressionAttributeValues: expr.Values(),
+		UpdateExpression:          expr.Update(),
+	}
+
+	// 항목 업데이트 요청 전송
+	_, err = svc.UpdateItem(input)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	fmt.Println("UpdateItem operation successful")
+}
+
 func main() {
-	READ_ENV_FILE()
+	LoadEnvFile()
 	ACCESS_KEY := os.Getenv("ACCESS_KEY")
 	SECRET_KEY := os.Getenv("SECRET_KEY")
-	REGION := "ap-northeast-2"
+	REGION := os.Getenv("REGION")
 	session := client.NewSession(ACCESS_KEY, SECRET_KEY, REGION)
-	dynamodbClient := dynamodb.New(session)
-	dynamodbClient.QueryOne(
-		"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoiSldUIiwic2VjIjoiQ0hPU1VOX0FQSV9LRVkiLCJpYXQiOjE2NjM2NTIwMTIsImV4cCI6MTY2NjI0NDAxMiwiaXNzIjoiVG9tbXkifQ.9Iig6q9xdd8woninhlXuvU-0bvQa_5Cey_3qGl8d9Fs",
-		// "c9f1e0cb-f989-4717-8971-b0b6669b3d2f",
-	)
+	dataSource := dynamodb.GetInstance(session)
 
 }

@@ -97,3 +97,12 @@ curl -s https://checkip.amazonaws.com
 ```
 
 <br><br><br><br><br>
+
+# 나의 퍼블릭 IP 알아내기
+
+```
+dig +short myip.opendns.com @resolver1.opendns.com
+curl -s https://checkip.amazonaws.com
+```
+
+<br><br><br><br><br>

@@ -53,6 +53,8 @@ tmux a #                        # 직전 detach된 세션으로 들어가기
 [PREFIX] + x                // Pane kill
 [PREFIX] + &                // window kill
 [PREFIX] + CTRL + 방향키    // Pane 크기 변경
+move-window                // window index 변경
+swap-window                // 두 window 바꾸기
 ```
 
 

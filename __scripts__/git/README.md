@@ -18,7 +18,7 @@ cat ~/.git-credentials                      # 인증서 확인하기
 git config --global core.editor "vim"
 ```
 
-## [ Autho 변경하기 ]
+## [ Author 변경하기 ]
 
 ```
 git commit --amend --reset-author
@@ -26,6 +26,33 @@ git commit --amend --reset-author
 ```
 git commit --amend --author="Author Name <email@example.com>"
 ```
+
+## [ 여러 Commit들 변경하기 - rebase ]
+
+1. perfrom rebase
+
+> ```
+> git rebase -i <commit-position>
+> ```
+
+2. change `pick` --> `edit` 
+
+>```
+> edit 5ga39z1
+>```
+
+3. add files that have been changed to stage area
+
+>```
+>git add sample.code
+>```
+
+4. reflect changed status
+
+>```
+>git commit --amend
+>git rebase --continu
+>```
 
 
 # Pull
@@ -36,3 +63,9 @@ git commit --amend --author="Author Name <email@example.com>"
 git switch origin_branch
 git checkout --track origin/origin_branch
 ```
+
+# README.md
+
+## C4 Diagrams
+ - https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams
+ - https://mermaid.js.org/syntax/c4c.html

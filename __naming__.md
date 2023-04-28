@@ -28,6 +28,8 @@
  - `Source`
  - `Iterator`
  - `Query`
+ - `Mapper`
+ - `Loader`
 
 # Meaningless Variable Name
 
