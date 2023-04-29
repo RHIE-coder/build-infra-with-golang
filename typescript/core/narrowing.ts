@@ -16,24 +16,55 @@ function needNarrowing(data: string | number): (number|void) {
 // 이 밖에도 in, instanceof 등을 활용하여 type narrowing
 
 /* type predicates */
-type Fish = { getName: () => void}
-type Bird = { getName: () => void}
+type Fish = { name: string, swim: () => void}
+type Bird = { name: string, fly: () => void}
 
 type Animal = Fish | Bird
 
-function BirdGuard(pet :Animal): pet is Bird {
-    return (pet as Bird).getName !== undefined 
-}
-
-let foo: Animal= {
-    getName() {
-        console.log("flying")
+function getInstance(name:string, adoptType: "fish" | "bird"): Animal {
+    if(adoptType === "fish") {
+        return {
+            name,
+            swim() {
+                console.log("swimming")
+            }
+        }
+    } else {
+        return {
+            name,
+            fly() {
+                console.log("flying")
+            }
+        }
     }
 }
 
-foo // Animal
-if(BirdGuard(foo)) {
-    foo.getName() // expected Bird but it is still Animal
-}else {
-    foo.getName() // expected Fish but it occurs "does not exist" error
+function BirdGuard(pet: Animal): pet is Bird {
+    // return (pet as Bird).name !== undefined 
+    return true
 }
+
+
+function typeGuardExample() {
+    type PetType = "bird" | "fish"
+    const name: string = process.argv[2]
+    const type: PetType = process.argv[3] as PetType
+    if (!(type === "bird" || type === "fish")) {
+        throw new SyntaxError("the type must be 'bird' or 'fish'")
+    }
+    const pet: Animal = getInstance(name, type)
+
+    if(BirdGuard(pet)) {
+        pet.fly()
+    } else {
+        pet.swim()
+    }
+}
+
+typeGuardExample()
+
+
+
+
+
+

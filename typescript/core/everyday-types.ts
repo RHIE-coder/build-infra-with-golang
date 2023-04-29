@@ -20,6 +20,7 @@ const a44: {a:string, b:number} = {a:"hello", b:33};
 const a44444: {a:string, b?:string} = {a:"good"} // optional properties
 
 /* array */
+// TypeScript does not assume that arrays are immutable
 const a5: number[] = [1, 2, 3, 4]
 const a55: (number|string)[] = [1, "2"] // union type
 const a555: Array<number> = [5, 6, 7]
