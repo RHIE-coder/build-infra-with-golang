@@ -13,7 +13,8 @@ func LoadConfig() {
 		log.Fatal("fail to load the environment variables")
 	}
 
-	os.Setenv("ACCOUNT_ADDRESS", "0xE36AE64156db78dd4797864E9A2f3C1C40625BF3")
+	os.Setenv("ACCOUNT_OWEN", "0x2894706debA1DF71735053E8f55f65D34348c051")
+	os.Setenv("ACCOUNT_ALICE", "0xa49EAcDaDeF57F4ABC4d52D528945CE4c3834293")
 }
 
 func GetConfig(property string) string {

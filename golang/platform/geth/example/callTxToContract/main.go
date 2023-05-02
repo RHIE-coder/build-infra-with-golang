@@ -28,7 +28,7 @@ func main() {
 	var metadata []byte
 	var err error
 
-	for _, path := range []string{"../../contract", "./contract", "."} {
+	for _, path := range []string{"../../contract", "../contract", "./contract", "."} {
 		metadata, err = os.ReadFile(path + "/" + filename)
 
 		if err != nil {

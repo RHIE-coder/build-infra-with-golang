@@ -101,6 +101,29 @@ DynamoDB는 스키마 없는 NoSQL 데이터베이스입니다. 이는 테이블
 
 UpdateItem의 가장 일반적인 용도는 기존 항목을 업데이트하는 것입니다. 하지만 실제로 UpdateItem은 항목이 아직 없는 경우 항목을 자동으로 생성하는 upsert를 수행합니다.
 
+ - ReturnValues: ALL_OLD
+
+기존 항목을 업데이트하면 ALL_OLD는 업데이트 전에 나타난 전체 항목을 반환합니다.
+
+존재하지 않는 항목을 업데이트하면(upsert) ALL_OLD는 효과를 나타내지 않습니다.
+
+ - ReturnValues: ALL_NEW
+
+기존 항목을 업데이트하면 ALL_NEW는 업데이트 후에 나타난 전체 항목을 반환합니다.
+
+존재하지 않는 항목을 업데이트하면(upsert) ALL_NEW는 전체 항목을 반환합니다.
+
+ - ReturnValues: UPDATED_OLD
+
+기존 항목을 업데이트하면 UPDATED_OLD는 업데이트 전에 나타난 업데이트된 속성만 반환합니다.
+
+존재하지 않는 항목을 업데이트하면(upsert) UPDATED_OLD는 효과를 나타내지 않습니다.
+
+ - ReturnValues: UPDATED_NEW
+
+기존 항목을 업데이트하면 UPDATED_NEW는 업데이트 후에 나타난 영향을 받은 속성만 반환합니다.
+
+존재하지 않는 항목을 업데이트하면(upsert) UPDATED_NEW는 업데이트 후에 나타나는 업데이트된 속성만 반환합니다.
 
 ### - DeleteItem
 
@@ -114,4 +137,9 @@ UpdateItem의 가장 일반적인 용도는 기존 항목을 업데이트하는 
 
 #### ReturnValues
 
+- ReturnValues: ALL_OLD
+
+기존 항목을 삭제하면 ALL_OLD는 삭제하기 전에 나타난 전체 항목을 반환합니다.
+
+존재하지 않는 항목을 삭제하면 ALL_OLD는 데이터를 반환하지 않습니다.
 
