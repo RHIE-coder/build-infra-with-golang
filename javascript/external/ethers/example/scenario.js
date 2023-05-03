@@ -127,15 +127,15 @@ const OWEN = "0x2894706DEBa1df71735053e8F55F65d34348C051"
 const ALICE = "0xa49EAcDaDeF57F4ABC4d52D528945CE4c3834293"
 const RHIELU = "0x2D81c2486F2C8a286B067cdEdda2E6815e61DDdA"
 const HUBER = "0xe1625a0d89B0fB0BfC3835E91B1FA8475409aE8E"
-const ANDY = "0xf44ec05E8d0065252e3a9D2b8334225d3Ee71B4B";
+const ANDY = "0xe7517164cBd1943eD5dffe1fbAC14E467Db41a75";
 
 const RHIELU_PK = customLib.getPrivateKeyFromMnemonic(process.env.RHIENY_MNEMONIC).slice(2)
 const OWEN_PK =   process.env.OWEN_PRIVATE_KEY
 const HUBER_PK =  process.env.HUBER_PRIVATE_KEY;
 
 (async()=>{
-    // await GoerliETH();
-    // await GoerliToken();
+    // await EtherETH(SEP, SEP_CHAIN_ID);
+    // await EtherToken(SEP, SEP_CHAIN_ID);
     await LuniverseToken();
     // console.log(require('ethers'))
 })();
@@ -193,11 +193,11 @@ async function LuniverseToken() {
     console.log(result)
 }
 
-async function GoerliToken() {
+async function EtherToken(_network, _id) {
     let result;
 
-    const network = GEO
-    const chainId = GEO_CHAIN_ID
+    const network = _network
+    const chainId = _id 
     const tokenSendInfo = {
         amount: "2000",
         from: HUBER,
@@ -249,12 +249,12 @@ async function GoerliToken() {
     console.log(result)
 }
 
-async function GoerliETH() {
+async function EtherETH(_network, _id) {
     // console.log(require("ethers").toBeHex(49)) // GET NONCE
     let result;
 
-    const network = GEO
-    const chainId = GEO_CHAIN_ID
+    const network = _network 
+    const chainId = _id
     const coinSendInfo = {
         amount: "1000000000000000",
         from: OWEN,
