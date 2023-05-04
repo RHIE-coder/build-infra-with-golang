@@ -123,11 +123,13 @@ const LUN_CHAIN_ID = 256
 
 
 /* Account Address */
-const OWEN = "0x2894706DEBa1df71735053e8F55F65d34348C051"
-const ALICE = "0xa49EAcDaDeF57F4ABC4d52D528945CE4c3834293"
-const RHIELU = "0x2D81c2486F2C8a286B067cdEdda2E6815e61DDdA"
-const HUBER = "0xe1625a0d89B0fB0BfC3835E91B1FA8475409aE8E"
+const OWEN = "0x2894706DEBa1df71735053e8F55F65d34348C051";
+const ALICE = "0xa49EAcDaDeF57F4ABC4d52D528945CE4c3834293";
+const RHIELU = "0x2D81c2486F2C8a286B067cdEdda2E6815e61DDdA";
+const RHIEWALL = "0xe7517164cBd1943eD5dffe1fbAC14E467Db41a75";
+const HUBER = "0xe1625a0d89B0fB0BfC3835E91B1FA8475409aE8E";
 const ANDY = "0xe7517164cBd1943eD5dffe1fbAC14E467Db41a75";
+const HAR = "0x67aB8086222DC98Ae21dE2478363096E2D542759";
 
 const RHIELU_PK = customLib.getPrivateKeyFromMnemonic(process.env.RHIENY_MNEMONIC).slice(2)
 const OWEN_PK =   process.env.OWEN_PRIVATE_KEY
@@ -147,9 +149,9 @@ async function LuniverseToken() {
     const chainId = LUN_CHAIN_ID
 
     const tokenSendInfo = {
-        amount: "100000000000000",
+        amount: "0.000099999999899998",
         from: RHIELU,
-        to: ANDY,
+        to: RHIEWALL,
     }
     console.log(" --- token balance --- ")
     result = await request(TokenBalance(network, RHIELU))
@@ -195,21 +197,24 @@ async function LuniverseToken() {
 
 async function EtherToken(_network, _id) {
     let result;
+    const sender = OWEN
+    const senderKey = OWEN_PK
+
 
     const network = _network
     const chainId = _id 
     const tokenSendInfo = {
-        amount: "2000",
-        from: HUBER,
-        to: OWEN,
+        amount: "0.00329",
+        from: sender,
+        to: ALICE,
     }
 
     console.log(" --- token balance --- ")
-    result = await request(TokenBalance(network, HUBER))
+    result = await request(TokenBalance(network, sender))
     console.log(result)
 
     console.log(" --- account nonce --- ")
-    result = await request(AccountNonce(network, HUBER)) 
+    result = await request(AccountNonce(network, sender)) 
     console.log(result)
     const nonce = result.data.nonce
 
@@ -219,6 +224,15 @@ async function EtherToken(_network, _id) {
     }))
     console.log(result)
     const estimate = result.data
+
+    // rawTxn = {
+    //     "from": "0x2894706debA1DF71735053E8f55f65D34348c051",
+    //     "to": "0x468f9E09806256209388d9c0fBd911C4D49F9fbe",
+    //     "data": "0xa9059cbb000000000000000000000000a49eacdadef57f4abc4d52d528945ce4c38342930000000000000000000000000000000000000000000000000c3663566a580000",
+    //     "gas": "0x93ff",
+    //     "gasPrice": "0x3b9ac9ff",
+    //         "nonce": "0xb",
+    // }
 
     console.log(" --- token raw transation --- ")
     result = await request(TokenRawTxn(network, {
@@ -239,7 +253,7 @@ async function EtherToken(_network, _id) {
     console.log(rawTxn)
     
     console.log(" >>> sign transaction")
-    const signed_tx = (await customLib.signTransaction(rawTxn, HUBER_PK, chainId)).slice(2)
+    const signed_tx = (await customLib.signTransaction(rawTxn, senderKey, chainId)).slice(2)
     console.log(signed_tx)
 
     console.log(" --- send transaction --- ")
@@ -252,20 +266,21 @@ async function EtherToken(_network, _id) {
 async function EtherETH(_network, _id) {
     // console.log(require("ethers").toBeHex(49)) // GET NONCE
     let result;
-
+    const sender = OWEN
+    const senderKey = OWEN_PK
     const network = _network 
     const chainId = _id
     const coinSendInfo = {
-        amount: "1000000000000000",
-        from: OWEN,
+        amount: "0.005",
+        from: sender,
         to: ALICE,
     }
     console.log(" --- account balance --- ")
-    result = await request(AccountBalance(network, OWEN))
+    result = await request(AccountBalance(network, sender))
     console.log(result)
 
     console.log(" --- account nonce --- ")
-    result = await request(AccountNonce(network, OWEN)) 
+    result = await request(AccountNonce(network, sender)) 
     console.log(result)
     const nonce = result.data.nonce
 
@@ -295,7 +310,7 @@ async function EtherETH(_network, _id) {
     
     console.log(" >>> sign transaction")
 
-    const signed_tx = (await customLib.signTransaction(rawTxn, OWEN_PK, chainId)).slice(2)
+    const signed_tx = (await customLib.signTransaction(rawTxn, senderKey, chainId)).slice(2)
     console.log(signed_tx)
 
     console.log(" --- send transaction --- ")

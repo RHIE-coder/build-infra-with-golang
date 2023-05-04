@@ -25,7 +25,51 @@ Testing
 
 
 
+## [ Research ]
 
+### - DynamoDB PutItem
+
+```go
+// {"amount":{"S":"100"},"currency":{"S":"ETH"}}
+type TransactionLog struct {
+	TxId      string `json:"txId"`
+	Timestamp int64  `json:"timestamp"`
+	Type      string `json:"type"`
+	Message   string `json:"message"`
+	Data      map[string]interface{}
+}
+
+// {"amount":{"S":"100"},"currency":{"S":"ETH"}}
+type TransactionLog struct {
+	TxId      string `json:"txId"`
+	Timestamp int64  `json:"timestamp"`
+	Type      string `json:"type"`
+	Message   string `json:"message"`
+	Data      map[string]string
+}
+
+// {"amount":{ "N" : "100" },"currency":{"S":"ETH"}}
+type TransactionLog struct {
+	TxId      string `json:"txId"`
+	Timestamp int64  `json:"timestamp"`
+	Type      string `json:"type"`
+	Message   string `json:"message"`
+	Data      TransactionLogData
+}
+```
+
+아래 경우는 사용하지 말 것.
+
+```go
+// {"amount":{"M":{"SS":{"NULL":true},"BS":{"NULL":true},"B":{"NULL":true},"NULL":{"NULL":true},"S":{"NULL":true},"BOOL":{"NULL":true},"NS":{"NULL":true},"L":{"NULL":true},"M":{"NULL":true},"N":{"S":"100"}}},"currency":{"M":{"SS":{"NULL":true},"BS":{"NULL":true},"B":{"NULL":true},"NULL":{"NULL":true},"S":{"S":"USD"},"BOOL":{"NULL":true},"NS":{"NULL":true},"L":{"NULL":true},"M":{"NULL":true},"N":{"NULL":true}}}}
+type TransactionLog struct {
+	TxId      string `json:"txId"`
+	Timestamp int64  `json:"timestamp"`
+	Type      string `json:"type"`
+	Message   string `json:"message"`
+	Data      *dynamodb.AttributeValue
+}
+```
 
 
 

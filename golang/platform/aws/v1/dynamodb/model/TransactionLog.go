@@ -1,15 +1,23 @@
 package model
 
-import "github.com/aws/aws-sdk-go/service/dynamodb"
-
 type TransactionLog struct {
-	TxId      string `json:"txId"`
-	Timestamp int    `json:"timestamp"`
+	TxId      string `json:"txId" keytype:"partition" attr:"S"`
+	Timestamp int64  `json:"timestamp" keytype:"sort" attr:"N"`
 	Type      string `json:"type"`
 	Message   string `json:"message"`
-	Data      map[string]*dynamodb.AttributeValue
+	Data      TransactionLogData
 }
 
-func (_ *TransactionLog) GetTableName() string {
+func (_ TransactionLog) GetTableName() string {
 	return "TRANSACTION_LOG_DEV"
+}
+
+// TODO
+// func (_ *TransactionLog) GetTableName() string {
+// 	return "TRANSACTION_LOG_DEV"
+// }
+
+type TransactionLogData struct {
+	Amount   uint   `json:"amount"`
+	Currency string `json:"currency"`
 }
