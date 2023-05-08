@@ -71,6 +71,99 @@ type TransactionLog struct {
 }
 ```
 
+### - DynamoDB Query
+
+Between 사용시 `1683165917415` timestamp 값에 대하여
+
+```go
+// 조회됨
+keyCondition := expression.Key("txId").
+	Equal(expression.Value(txId)).
+	And(
+		expression.Key("timestamp").
+			Between( //1683165917415 data
+				expression.Value(1683165917410),
+				expression.Value(1683165917415),
+			),
+	)
+
+// 조회됨
+keyCondition := expression.Key("txId").
+	Equal(expression.Value(txId)).
+	And(
+		expression.Key("timestamp").
+			Between( //1683165917415 data
+				expression.Value(1683165917415),
+				expression.Value(1683165917415),
+			),
+	)
+
+// 조회됨
+keyCondition := expression.Key("txId").
+    Equal(expression.Value(txId)).
+    And(
+        expression.Key("timestamp").
+            Between( //1683165917415 data
+                expression.Value(1683165917415),
+                expression.Value(1683165917420),
+            ),
+    )
+
+// 조회됨
+keyCondition := expression.Key("txId").
+	Equal(expression.Value(txId)).
+	And(
+		expression.Key("timestamp").
+			Between( //1683165917415 data
+				expression.Value(0),
+				expression.Value(1683165917415),
+			),
+	)
+
+// X 
+keyCondition := expression.Key("txId").
+	Equal(expression.Value(txId)).
+	And(
+		expression.Key("timestamp").
+			Between( //1683165917415 data
+				expression.Value(0),
+				expression.Value(0),
+			),
+	)
+```
+
+결과 형식
+
+```go
+{
+  Count: 1,
+  Items: [{
+      type: {
+        S: "coin"
+      },
+      timestamp: {
+        N: "1683165917415"
+      },
+      message: {
+        S: "ethereum coin balance"
+      },
+      txId: {
+        S: "456daad5-0cb6-443f-96d0-79c45491a300"
+      },
+      Data: {
+        M: {
+          amount: {
+            N: "100"
+          },
+          currency: {
+            S: "ETH"
+          }
+        }
+      }
+    }],
+  ScannedCount: 1
+}
+```
 
 
 

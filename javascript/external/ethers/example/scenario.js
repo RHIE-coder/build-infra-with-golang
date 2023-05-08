@@ -149,7 +149,7 @@ async function LuniverseToken() {
     const chainId = LUN_CHAIN_ID
 
     const tokenSendInfo = {
-        amount: "0.000099999999899998",
+        amount: "0.01",
         from: RHIELU,
         to: RHIEWALL,
     }
@@ -204,7 +204,7 @@ async function EtherToken(_network, _id) {
     const network = _network
     const chainId = _id 
     const tokenSendInfo = {
-        amount: "0.00329",
+        amount: "0.005",
         from: sender,
         to: ALICE,
     }

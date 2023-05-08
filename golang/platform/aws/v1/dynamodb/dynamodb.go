@@ -2,6 +2,7 @@ package dynamodb
 
 import (
 	"fmt"
+	"golang/platform/aws/v1/dynamodb/model"
 	"reflect"
 	"sync"
 
@@ -52,18 +53,19 @@ func (ds *DynamoDBDataSource) Put(model DynamoDBModel) *dynamodb.PutItemOutput {
 }
 
 // TODO
-func (ds *DynamoDBDataSource) Query(tableName string, txId string) {
+func (ds *DynamoDBDataSource) Query(tableName string, txId string) []model.TransactionLog {
 	builder := expression.NewBuilder()
 
 	keyCondition := expression.Key("txId").
-		Equal(expression.Value(txId)).
-		And(
-			expression.Key("timestamp").
-				Between( //1683165917415
-					expression.Value(1683165917410),
-					expression.Value(1683165917420),
-				),
-		)
+		Equal(expression.Value(txId))
+		// Equal(expression.Value(txId)).
+		// And(
+		// 	expression.Key("timestamp").
+		// 		Between( //1683165917415
+		// 			expression.Value(0),
+		// 			expression.Value(1683165917415),
+		// 		),
+		// )
 
 	expr, err := builder.WithKeyCondition(keyCondition).Build()
 	if err != nil {
@@ -74,23 +76,40 @@ func (ds *DynamoDBDataSource) Query(tableName string, txId string) {
 		KeyConditionExpression:    expr.KeyCondition(),
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
+		Limit:                     aws.Int64(1),
+		ExclusiveStartKey: map[string]*dynamodb.AttributeValue{
+			"txId": {
+				S: aws.String("456daad5-0cb6-443f-96d0-79c45491a300"),
+			},
+			"timestamp": {
+				N: aws.String("1683510603697"),
+			},
+		},
 	}
-
-	fmt.Println(expr.KeyCondition())
-	fmt.Println(expr.Names())
-	fmt.Println(expr.Values())
 
 	result, err := ds.sess.Query(input)
 	if err != nil {
 		panic(err)
 	}
 
-	items := len(result.Items)
+	fmt.Println(result)
+	fmt.Println("---------------")
 
-	for 
+	itemsLen := len(result.Items)
 
+	modelList := make([]model.TransactionLog, itemsLen)
+	for i := 0; i < itemsLen; i++ {
+		err := dynamodbattribute.UnmarshalMap(result.Items[i], &modelList[i])
+
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return modelList
 }
 
+// TODO
 func ParseModelKeys(model DynamoDBModel) map[string][]string {
 	var keyMap map[string][]string = make(map[string][]string)
 	fields := reflect.TypeOf(model)
