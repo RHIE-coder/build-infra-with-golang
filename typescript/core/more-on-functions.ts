@@ -3,7 +3,7 @@ function greeter(fn: (a:string) => void) {
     fn("hello world");
 }
 
-greeter((b:string) => { console.log(b)})
+greeter((b:string) => { console.log(b)}) // "hello world"
 
 
 /* call signature */
@@ -18,7 +18,7 @@ function myDoSth(fn: MyFunction): void {
 
 const myFunc = (num: number) => num > 3;
 myFunc.desc = "check number bigger than 3"
-myDoSth(myFunc)
+myDoSth(myFunc) // "check number bigger than 3 : true"
 
 
 /* constructor signature */
@@ -58,7 +58,7 @@ function map<T,O>(list:T[], fn:(arg: T)=>O): O[] {
     return list.map(fn)
 }
 const parsed = map<number,number>([1,2,3,4,5], (n)=>n+10)
-console.log(parsed)
+console.log(parsed) // "abcdef has length of 6"
 
 // constraints
 type Subject = {
@@ -96,7 +96,7 @@ function safeParse(s: string): unknown {
 type Me = { name:string, age:number }
 // const obj:Me = safeParse(`{"name":"rhie-coder","age":30}`); // Type 'unknown' is not assignable
 const obj = safeParse(`{"name":"rhie-coder","age":30}`); // Type 'unknown' is not assignable
-console.log(obj)
+console.log(obj) // { name: 'rhie-coder', age: 30 }
 
 const obj2:unknown = safeParse(`{"name":"rhie-coder","age":30}`);
 const obj3:Me = safeParse(`{"name":"rhie-coder","age":30}`) as Me;
@@ -106,4 +106,4 @@ type ABC = { a: number; b: number; c: number };
 function sum({ a, b, c }: ABC) {
   console.log(a + b + c);
 }
-sum({ a: 10, b: 3, c: 9 });
+sum({ a: 10, b: 3, c: 9 }); // 22

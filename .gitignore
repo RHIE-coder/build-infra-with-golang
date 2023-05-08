@@ -2,3 +2,4 @@
 .env
 node_modules
 nohup.out
+.dart_tool
