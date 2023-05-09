@@ -1,10 +1,10 @@
 package main
 
 import (
-	"golang/platform/aws/utils"
 	"golang/platform/aws/v1/client"
 	"golang/platform/aws/v1/dynamodb"
 	"golang/platform/aws/v1/dynamodb/model"
+	"golang/platform/aws/v1/utils"
 	"log"
 	"math/rand"
 	"os"
