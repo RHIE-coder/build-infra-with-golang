@@ -4,10 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
 )
+
+type RequestBody struct {
+	Result  string `json:"result"`
+	Message string `json:"message"`
+}
 
 func USAGE_HTTP_HANDLER() {
 	handler := func(rw http.ResponseWriter, req *http.Request) {
@@ -15,13 +21,39 @@ func USAGE_HTTP_HANDLER() {
 		fmt.Println("URL : ", req.URL)
 		fmt.Println("Header : ", req.Header)
 
+		// b, _ := ioutil.ReadAll(req.Body)
+		var buf bytes.Buffer
+		newBody := io.TeeReader(req.Body, &buf)
+
+		// TODO
+		// fmt.Printf("%p\n", newReqBody)
+		// fmt.Printf("%p\n", req.Body)
+
 		b, _ := ioutil.ReadAll(req.Body)
+
+		reqBody := RequestBody{}
+		err := json.NewDecoder(newBody).Decode(&reqBody)
+
+		if err != nil {
+			panic(err)
+		}
+
 		defer req.Body.Close()
 		fmt.Println("Body : ", string(b))
+		b2, _ := json.Marshal(reqBody)
+		fmt.Println("Body2: ", string(b2))
 
 		switch req.Method {
 		case "POST":
-			rw.Write([]byte(`{"result":"success", "message": "post request success !"}`))
+			fmt.Println("res data is written")
+			// rw.Write([]byte(`{"result":"success", "message": "post request success !"}`))
+			fmt.Fprint(rw, `{"result":"success", "message": "post request success !"}`)
+			fmt.Println("wait start")
+			// buf := rw.(*bytes.Buffer) //*bytes.Buffer does not implement http.ResponseWriter (missing method Header)
+			// responseString := buf.String()
+			// fmt.Println(responseString)
+			time.Sleep(3 * time.Second)
+			fmt.Println("wait end")
 		case "GET":
 			rw.Write([]byte("get request success !"))
 		}
@@ -34,14 +66,16 @@ func USAGE_HTTP_HANDLER() {
 	       }'
 	*/
 
-	requsetToServer := func() {
-		time.Sleep(5 * time.Second)
+	reqToServer := func() {
+		time.Sleep(3 * time.Second)
 		bodyData := []byte(`{"name": "John Doe", "age": 30}`)
 		body := bytes.NewBuffer(bodyData)
 		req, _ := http.NewRequest("POST", "http://localhost:8000", body)
 		req.Header.Set("Content-Type", "application/json")
 		client := &http.Client{}
+		fmt.Println("request!!")
 		resp, err := client.Do(req)
+		fmt.Println("response!!")
 		if err != nil {
 			panic(err)
 		}
@@ -53,7 +87,7 @@ func USAGE_HTTP_HANDLER() {
 		json.MarshalIndent(data, "", "  ")
 		fmt.Println(data)
 	}
-	go requsetToServer()
+	go reqToServer()
 	err := http.ListenAndServe(":8000", http.HandlerFunc(handler))
 	if err != nil {
 		fmt.Println("Failed to ListenAndServe : ", err)
