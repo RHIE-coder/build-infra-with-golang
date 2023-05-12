@@ -3,6 +3,7 @@ package dynamodb
 import (
 	"fmt"
 	"golang/platform/aws/v1/dynamodb/model"
+	"golang/platform/aws/v1/utils"
 	"reflect"
 	"sync"
 
@@ -50,6 +51,60 @@ func (ds *DynamoDBDataSource) Put(model DynamoDBModel) *dynamodb.PutItemOutput {
 	}
 
 	return output
+}
+
+func (ds *DynamoDBDataSource) Scan() {
+
+	tablename := "TRANSACTION_LOG_DEV"
+	// address := "0x5b62c110b69dc4c9cee8d54603d503679af7678e"
+
+	// Set up the scan input parameters
+	// params := &dynamodb.ScanInput{
+	// 	TableName:        aws.String(tablename),
+	// 	FilterExpression: aws.String("address = :address"),
+	// 	ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+	// 		":address": {
+	// 			N: aws.String(address),
+	// 		},
+	// 	},
+	// }
+
+	typeName := "coin"
+
+	params := &dynamodb.ScanInput{
+		TableName:        aws.String(tablename),
+		FilterExpression: aws.String("#type = :type"),
+		ExpressionAttributeNames: map[string]*string{
+			"#type": aws.String("type"),
+		},
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":type": {
+				S: aws.String(typeName),
+			},
+		},
+	}
+
+	// Perform the scan operation
+	result, err := ds.sess.Scan(params)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(result)
+	fmt.Println("---------------")
+
+	itemsLen := len(result.Items)
+
+	modelList := make([]model.TransactionLog, itemsLen)
+	for i := 0; i < itemsLen; i++ {
+		err := dynamodbattribute.UnmarshalMap(result.Items[i], &modelList[i])
+
+		if err != nil {
+			panic(err)
+		}
+	}
+	fmt.Println(utils.StringifyJSON(modelList))
+
 }
 
 // TODO
