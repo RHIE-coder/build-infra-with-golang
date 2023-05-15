@@ -1,5 +1,5 @@
 /*  
-node call eth_getBalance 0xE36AE64156db78dd4797864E9A2f3C1C40625BF3 latest
+node call eth_getBalance 0x2894706deba1df71735053e8f55f65d34348c051 latest
 node call eth_getCode 0x39c44CD8432e45B1bA8EDe1Ca6f5020ea04438E0 latest
 node call web3_clientVersion
 node call web3_sha3 0x68656c6c6f20776f726c64
@@ -15,12 +15,13 @@ node call eth_gasPrice
 node call eth_accounts
 node call eth_blockNumber
 node call eth_getStorageAt 0xE36AE64156db78dd4797864E9A2f3C1C40625BF3 0x0 latest
-node call eth_getTransactionCount 0xE36AE64156db78dd4797864E9A2f3C1C40625BF3 latest
-node call eth_getBlockTransactionCountByHash 0xa2e87148321048b7b098252abfd6a22adeddadd1608a226b72ae330457b8f5a8
+node call eth_getTransactionCount 0x468f9E09806256209388d9c0fBd911C4D49F9fbe latest
+node call eth_getBlockTransactionCountByHash 0x9539c415683c031d3fe82318e9c43201d8cb202474e73bab8292dc8e26f66599
 node call eth_getBlockTransactionCountByNumber 0x326b82
 node call eth_getUncleCountByBlockHash 0xa2e87148321048b7b098252abfd6a22adeddadd1608a226b72ae330457b8f5a8
 node call eth_getUncleCountByBlockNumber 0xe8
-
+node call eth_getLogs '{"fromBlock":"0x335024","toBlock":"0x34d385","address":"0x468f9E09806256209388d9c0fBd911C4D49F9fbe"}'
+node call eth_getLogs '{"fromBlock":3362852,"toBlock":3462021,"address":"0x468f9E09806256209388d9c0fBd911C4D49F9fbe"}'
 
  -- Unable To Infura --
 X node call eth_sign 0x2894706debA1DF71735053E8f55f65D34348c051 0x68656c6c6f20776f726c64
@@ -55,7 +56,6 @@ eth_newPendingTransactionFilter
 eth_uninstallFilter
 eth_getFilterChanges
 eth_getFilterLogs
-eth_getLogs
 
 eth_getWork
 eth_submitWork
@@ -69,13 +69,14 @@ const web3 = new (require('web3'))();
 
 (async()=>{
     const target = process.argv[2]
-
+    console.log(target)
     if(target == "toHex") {
         console.log(web3.utils.toHex(process.argv[3]))
         return
     }
 
     const sourceDir = `./json-rpc-spec/${target}`
+    
     await require(sourceDir)(process.argv.slice(3))
 })()
 

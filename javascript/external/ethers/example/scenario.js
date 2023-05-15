@@ -1,6 +1,6 @@
 const customLib = require("../libs");
 require("dotenv").config(__dirname);
-const axios = require("axios")
+const axios = require("axios");
 
 
 /* APIs */
