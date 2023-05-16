@@ -1,0 +1,1 @@
+print("tip-initMakeDirToPac : __init__.py는 디렉토리를 패키지로 만들어줍니다~^^")
