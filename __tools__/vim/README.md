@@ -49,6 +49,7 @@ colorscheme koehler     " color theme 설정
 [bash]# fg <index> // 해당 vim으로 돌아가기
 ```
 
-# 유용한 단축키
+# ???
 
  - `@:` 이전 커맨드 모드 실행
+ - ctrl + t : 정의된 함수로 이동

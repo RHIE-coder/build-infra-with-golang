@@ -1,0 +1,82 @@
+5. 흐름제어
+
+if, for, while, until, case, select 문법 제공
+
+    (1) if
+============================
+if [ CONDITIONS ]
+then
+    STATEMENT1
+    STATEMENT2
+    ...
+elif [ CONDITIONS ]
+then
+    STATEMENT1
+    STATEMENT2
+    ...
+else
+    STATEMENT1
+    STATEMENT2
+    ...
+fi
+============================
+
+    (2) for
+============================
+for VAR [in LIST]
+do
+    STATEMENT1
+    STATEMENT2
+    ...
+done
+============================
+
+    (3) while
+============================
+while [ CONDITION ]
+do 
+    STATEMENT1
+    STATEMENT2
+    ...
+done
+============================
+
+    (4) until
+        until문은 조건이 거짓일 경우 반복적인 작업을 하기 위해 사용되는 문법
+        사실 while문으로 처리하면 되므로 거의 사용되지 않음
+============================
+until [CONDITION ]
+do
+    STATEMENT1
+    STATEMENT2
+    ...
+done    
+============================
+
+    (5) case
+============================
+case EXPRESSION in
+PATTERN1)
+STATEMENT;;
+STATEMENT;;
+...
+PATTERN2)
+STATEMENT;;
+STATEMENT;;
+...
+*)
+STATEMENT;;
+STATEMENT;;
+...
+esac
+============================    
+
+    (6) select
+============================    
+select VAR in LIST
+do
+STATEMENT1
+STATEMENT2
+...
+done
+============================    
