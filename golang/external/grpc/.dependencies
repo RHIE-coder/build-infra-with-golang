@@ -1,0 +1,6 @@
+# CORE
+go get -u google.golang.org/grpc
+
+go get -u github.com/grpc-ecosystem/go-grpc-middleware
+go get -u github.com/pbnjay/memory
+go get -u github.com/sirupsen/logrus
