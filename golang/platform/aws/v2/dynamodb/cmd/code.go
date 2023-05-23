@@ -5,17 +5,40 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"path/filepath"
+	"runtime"
 
 	"golang/platform/aws/v2/common/utils"
-	dynamodb_module "golang/platform/aws/v2/dynamodb"
+	dynamodb_lib "golang/platform/aws/v2/dynamodb"
 	"golang/platform/aws/v2/dynamodb/models"
 
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/joho/godotenv"
 )
 
 func LoadEnvFile() {
-	// _, _, execPath, _ := runtime.Caller(0)
-	err := godotenv.Load(".env")
+	var err error
+	_, execPath, _, _ := runtime.Caller(0)
+	isRootPath := false
+	dirPath := filepath.Dir(execPath)
+	var filePath string
+
+	for !isRootPath {
+		filePath = filepath.Join(dirPath, ".env")
+		_, err = os.Stat(filePath)
+		if err != nil {
+			_, err = os.Stat(filepath.Join(dirPath, "go.mod"))
+			if err == nil {
+				isRootPath = true
+			}
+			dirPath = filepath.Dir(filepath.Join(dirPath, ".."))
+			continue
+		} else {
+			break
+		}
+	}
+
+	err = godotenv.Load(filePath)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -32,47 +55,59 @@ func main() {
 	ACCESS_KEY := os.Getenv("ACCESS_KEY")
 	SECRET_KEY := os.Getenv("SECRET_KEY")
 	REGION := os.Getenv("REGION")
-
-	ddbClient, err := dynamodb_module.GetClient(ACCESS_KEY, SECRET_KEY, REGION)
+	ddbClient, err := dynamodb_lib.GetClient(ACCESS_KEY, SECRET_KEY, REGION)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	switch cmd {
 	case "put":
-		typeName := []string{"coin", "token"}
-		messages := []string{
-			"ethereum coin balance",
-			"klaytn coin balance",
-			"news token balance",
-		}
-		currency := []string{"ETH", "KLAYTN", "NEWS"}
-
-		txLogItem := models.TransactionLog{
-			TxId:      "a120f758-88cb-4ae2-9dc4-006159f05624",
-			Timestamp: utils.GetNowTimestamp(),
-			Type:      typeName[rand.Intn(2)],
-			Message:   messages[rand.Intn(3)],
-			Data: models.Data{
-				Amount:   uint(rand.Intn(100-10) + 10),
-				Currency: currency[rand.Intn(3)],
-			},
-		}
-		err = ddbClient.Put(txLogItem)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
+		put(ddbClient)
 	case "query":
-		items, err := ddbClient.Query()
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-		fmt.Println(utils.StringifyJSON(items))
+		get(ddbClient)
 	}
 
 	/* Query */
 	// Get(svc)
 
+}
+
+func put(ddbClient *dynamodb_lib.DynamoDBClient) {
+	var err error
+	typeName := []string{"coin", "token"}
+	messages := []string{
+		"ethereum coin balance",
+		"klaytn coin balance",
+		"news token balance",
+	}
+	currency := []string{"ETH", "KLAYTN", "NEWS"}
+
+	txLogItem := models.TransactionLog{
+		TxId:      "a120f758-88cb-4ae2-9dc4-006159f05624",
+		Timestamp: utils.GetNowTimestamp(),
+		Type:      typeName[rand.Intn(2)],
+		Message:   messages[rand.Intn(3)],
+		Data: models.Data{
+			Amount:   uint(rand.Intn(100-10) + 10),
+			Currency: currency[rand.Intn(3)],
+		},
+	}
+	err = ddbClient.Put(txLogItem)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+}
+
+func get(ddbClient *dynamodb_lib.DynamoDBClient) {
+	keyExpr := expression.Key("txId").Equal(expression.Value("a120f758-88cb-4ae2-9dc4-006159f05624")).
+		And(
+			expression.Key("timestamp").GreaterThan(expression.Value(0)),
+		)
+	items, err := ddbClient.Query(models.TransactionLog{}, keyExpr, expression.ConditionBuilder{}, 0, false)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	fmt.Println(utils.StringifyJSON(items))
 }
 
 // func Get(svc *dynamodb.Client) {

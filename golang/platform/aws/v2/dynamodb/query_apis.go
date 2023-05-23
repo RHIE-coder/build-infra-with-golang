@@ -3,8 +3,8 @@ package dynamodb_lib
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"golang/platform/aws/v2/dynamodb/models"
+	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
@@ -12,7 +12,17 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
-func (ddbClient *DynamoDBClient) Put(item models.TransactionLog) error {
+func defineType(model interface{}) interface{} {
+
+	switch model.(type) {
+	case models.TransactionLog:
+		return &[]models.TransactionLog{}
+	}
+
+	return nil
+}
+
+func (ddbClient *DynamoDBClient) Put(item DynamoDBModel) error {
 
 	av, err := attributevalue.MarshalMap(item)
 	if err != nil {
@@ -34,14 +44,30 @@ func (ddbClient *DynamoDBClient) Put(item models.TransactionLog) error {
 	return err
 }
 
-func (ddbClient *DynamoDBClient) Query() (interface{}, error) {
+func (ddbClient *DynamoDBClient) Query(model DynamoDBModel, keyBuilder expression.KeyConditionBuilder, filterBuilder expression.ConditionBuilder, limit int, isAscending bool) (interface{}, error) {
 
 	var expr expression.Expression
 	var err error
-	keyExpr := expression.Key("txId").Equal(expression.Value("a120f758-88cb-4ae2-9dc4-006159f05624")).
-		And(
-			expression.Key("timestamp").GreaterThan(expression.Value(0)),
-		)
+	items := defineType(model)
+
+	if model == nil {
+		log.Fatal("DynamoDBModel must be set")
+	}
+
+	params := &dynamodb.QueryInput{
+		TableName: aws.String(model.GetTableName()),
+	}
+
+	if !keyBuilder.IsSet() {
+		log.Fatal("key must be set")
+	}
+
+	if filterBuilder.IsSet() {
+		expr, err = expression.NewBuilder().WithKeyCondition(keyBuilder).WithFilter(filterBuilder).Build()
+		params.FilterExpression = expr.Filter()
+	} else {
+		expr, err = expression.NewBuilder().WithKeyCondition(keyBuilder).Build()
+	}
 
 	// filterExpr := expression.Name("ca_addr").Equal(expression.Value(contract))
 	// filterExpr = filterExpr.And(expression.Name("method").Equal(expression.Value(method)))
@@ -50,48 +76,24 @@ func (ddbClient *DynamoDBClient) Query() (interface{}, error) {
 	// 	filterExpr = filterExpr.Or(expression.Name("event_type").Equal(expression.Value(actionList[1])))
 	// }
 
-	// expr, err = expression.NewBuilder().WithKeyCondition(keyExpr).WithFilter(filterExpr).Build()
-	expr, err = expression.NewBuilder().WithKeyCondition(keyExpr).Build()
-	// expr, err = expression.NewBuilder().Build()
-
-	// limitNum, err := strconv.Atoi(limit)
-	// if limitNum == 0 {
-	// 	return nil, fmt.Errorf("limit number is 0")
-	// }
-
-	fmt.Println(expr.KeyCondition()) // nil
-	fmt.Println(expr.Filter())       // nil
-	fmt.Println(len(expr.Names()))   // 0
-	fmt.Println(len(expr.Values()))  // 0
-
-	params := &dynamodb.QueryInput{
-		TableName: aws.String("TRANSACTION_LOG_DEV_BY_OWEN"),
-		// FilterExpression:          expr.Filter(),
-		ExpressionAttributeNames:  expr.Names(),
-		ExpressionAttributeValues: expr.Values(),
-		KeyConditionExpression:    expr.KeyCondition(),
-		// Limit:                     aws.Int32(int32(1)),
-		ScanIndexForward: aws.Bool(false),
+	if limit > 0 {
+		params.Limit = aws.Int32(int32(limit))
 	}
+
+	params.KeyConditionExpression = expr.KeyCondition()
+	params.ExpressionAttributeNames = expr.Names()
+	params.ExpressionAttributeValues = expr.Values()
+	params.ScanIndexForward = aws.Bool(isAscending)
 
 	output, err := ddbClient.sess.Query(context.Background(), params)
 	if err != nil {
 		return nil, err
 	}
 
-	var items []models.TransactionLog
-	// var items interface{}
-	attributevalue.UnmarshalListOfMaps(output.Items, &items)
-	// items := make([]models.LogTxnEvent, 0, len(output.Items))
-
-	// for _, item := range output.Items {
-	// 	data := models.LogTxnEvent{}
-	// 	err := attributevalue.UnmarshalMap(item, &data)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	items = append(items, data)
-	// }
+	err = attributevalue.UnmarshalListOfMaps(output.Items, &items)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
 	return items, nil
 }
