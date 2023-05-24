@@ -106,7 +106,12 @@ func get(ddbClient *dynamodb_lib.DynamoDBClient) {
 		And(
 			expression.Key("timestamp").GreaterThan(expression.Value(0)),
 		)
-	items, err := ddbClient.Query(models.TransactionLog{}, keyExpr, expression.ConditionBuilder{}, 0, false)
+
+	filterExpr := expression.Name("type").Equal(expression.Value("token"))
+	filterExpr = filterExpr.And(expression.Name("message").Contains("s t"))
+	// filterExpr = filterExpr.And(expression.Name("data.amount").Equal(expression.Value(19)))
+	// items, err := ddbClient.Query(models.TransactionLog{}, keyExpr, expression.ConditionBuilder{}, 0, false)
+	items, err := ddbClient.Query(models.TransactionLog{}, keyExpr, filterExpr, 0, false)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

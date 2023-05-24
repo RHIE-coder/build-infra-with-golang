@@ -16,6 +16,7 @@ type TransactionLog struct {
 	Data      Data   `dynamodbav:"data"      json:"-"`
 	Amount    uint   `dynamodbav:"-"         json:"amount"`
 	Currency  string `dynamodbav:"-"         json:"currency"`
+	Unknown   string `dynamodbav:"-"         json:"-"`
 }
 
 type Data struct {
