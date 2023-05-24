@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"reflect"
+	"strconv"
 
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
@@ -26,42 +27,77 @@ func (_ TransactionLog) GetTableName() string {
 	return "TRANSACTION_LOG_DEV_BY_OWEN"
 }
 
+// `dynamodbav`를 중심으로 구성된 데이터를 Unmarshal하는 작업
 func (model *TransactionLog) UnmarshalDynamoDBAttributeValue(av types.AttributeValue) error {
-	if m, ok := av.(*types.AttributeValueMemberM); ok {
-		typ := reflect.TypeOf(model).Elem()
-		for i := 0; i < typ.NumField(); i++ {
-			field := typ.Field(i)
-			avTagName := field.Tag.Get("dynamodbav")
-			if avTagName != "-" {
-				fmt.Println(avTagName, m.Value[avTagName])
+	err := convertAttributeValueToObject(model, av)
+	if err != nil {
+		return err
+	}
+	model.Amount = model.Data.Amount
+	model.Currency = model.Data.Currency
+	return nil
+}
+
+func convertAttributeValueToObject(model interface{}, av types.AttributeValue) error {
+	modelTyp := reflect.TypeOf(model).Elem()
+	modelVal := reflect.ValueOf(model)
+
+	if avM, ok := av.(*types.AttributeValueMemberM); ok {
+		for i := 0; i < modelTyp.NumField(); i++ {
+			modelField := modelTyp.Field(i)
+			avTagName := modelField.Tag.Get("dynamodbav")
+
+			if avTagName == "" || avTagName == "-" {
+				continue
 			}
 
-			// fmt.Println(typ.Field(i).Tag.Get("dynamodbav"))
-			// fmt.Println(m.Value[typ.Field(i).Tag.Get("dynamodbav")])
+			modelKeyName := modelField.Name
+
+			var elemOfModelVal reflect.Value
+			if modelVal.Kind() == reflect.Ptr {
+				elemOfModelVal = modelVal.Elem().FieldByName(modelKeyName)
+			} else {
+				elemOfModelVal = modelVal.FieldByName(modelKeyName)
+			}
+
+			elemOfavM := avM.Value[avTagName]
+
+			switch elemOfModelVal.Type().Kind() {
+			case reflect.String:
+				avS, ok := elemOfavM.(*types.AttributeValueMemberS)
+				if !ok {
+					return fmt.Errorf("fail to assert type to member S")
+				}
+				elemOfModelVal.SetString(avS.Value)
+			case reflect.Int, reflect.Int64:
+				avN, ok := elemOfavM.(*types.AttributeValueMemberN)
+				if !ok {
+					return fmt.Errorf("fail to assert type to member N")
+				}
+				num, err := strconv.Atoi(avN.Value)
+				if err != nil {
+					return err
+				}
+				elemOfModelVal.SetInt(int64(num))
+			case reflect.Uint:
+				avN, ok := elemOfavM.(*types.AttributeValueMemberN)
+				if !ok {
+					return fmt.Errorf("fail to assert type to member N")
+				}
+				num, err := strconv.Atoi(avN.Value)
+				if err != nil {
+					return err
+				}
+				elemOfModelVal.SetUint(uint64(num))
+			case reflect.Struct:
+				address := elemOfModelVal.Addr()
+				err := convertAttributeValueToObject(address.Interface(), elemOfavM)
+				if err != nil {
+					return err
+				}
+			}
 		}
 	}
 
 	return nil
 }
-
-// func ConvertAttributeValueMemberMToAttributValueS(m *types.AttributeValueMemberM, attrName string) (*types.AttributeValueMemberS, error) {
-
-// 	target = "ca_type"
-// 	sAttr, err = utils.ConvertAttributeValueMemberMToAttributValueS(m, target)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	l.ContractType = sAttr.Value
-
-// 	v, ok := m.Value[attrName]
-// 	if !ok {
-// 		return nil, fmt.Errorf("expected `%s` map key", attrName)
-// 	}
-
-// 	vv, kk := v.(*types.AttributeValueMemberS)
-// 	if !kk || vv == nil {
-// 		return nil, fmt.Errorf("expected `%s` map value string", attrName)
-// 	}
-
-// 	return vv, nil
-// }

@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
+	"reflect"
 	"runtime"
 
 	"golang/platform/aws/v2/common/utils"
@@ -65,6 +66,8 @@ func main() {
 		put(ddbClient)
 	case "query":
 		get(ddbClient)
+	case "test":
+		test()
 	}
 
 	/* Query */
@@ -108,6 +111,51 @@ func get(ddbClient *dynamodb_lib.DynamoDBClient) {
 		log.Fatal(err.Error())
 	}
 	fmt.Println(utils.StringifyJSON(items))
+}
+
+func test() {
+	type Person struct {
+		Name string
+		Age  int
+	}
+
+	// person := Person{}                             // 빈 Person 구조체 생성
+	// personValue := reflect.ValueOf(&person).Elem() // 구조체의 reflect 값 가져오기
+
+	// // 필드 이름으로 값을 할당
+	// nameField := personValue.FieldByName("Name")
+	// if nameField.IsValid() && nameField.CanSet() {
+	// 	nameField.SetString("Alice")
+	// }
+
+	// ageField := personValue.FieldByName("Age")
+	// if ageField.IsValid() && ageField.CanSet() {
+	// 	ageField.SetInt(30)
+	// }
+
+	// fmt.Println(person)
+
+	person := &Person{
+		Name: "Alice",
+		Age:  30,
+	}
+	valueReflected := reflect.ValueOf(person)
+
+	// Retrieve original struct value from reflect.Value
+	originalValue := valueReflected.Interface()
+
+	// Type assertion to the original struct type
+	originalPerson, ok := originalValue.(*Person)
+
+	// 아래는 전부 같은 주소값을 가짐
+	fmt.Printf("%p\n", person)
+	fmt.Printf("%p\n", originalValue)
+	fmt.Printf("%p\n", originalPerson)
+	if ok {
+		fmt.Println("Original struct value:", originalPerson)
+	} else {
+		fmt.Println("Failed to retrieve original struct value")
+	}
 }
 
 // func Get(svc *dynamodb.Client) {
