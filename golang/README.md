@@ -13,7 +13,7 @@
 
 [origin install guide](https://go.dev/doc/install)
 
-## Linux
+##  [ Linux ]
 
  - GET `tar.gz`
 
@@ -42,3 +42,73 @@ export PATH=$PATH:/usr/local/go/bin
 go version
 ```
 Confirm that the command prints the installed version of Go.
+
+4. bashrc
+
+```sh
+GOROOT=/usr/local/go
+GOPATH=$HOME/go
+PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+```
+
+
+<br><br><br><br><br>
+
+---
+
+
+# VSCODE 개발 전용 실행 파일 목록
+
+## [ List ]
+ - dlv
+ - dlv-dap
+ - goimports
+ - go-outline
+ - gomodifytags
+ - gopkgs
+ - goplay
+ - gopls
+ - gotests
+ - impl
+ - staticcheck
+
+## [ Install Command ]
+
+```sh
+# dlv
+# - dlv-dap ???
+go get github.com/go-delve/delve/cmd/dlv
+
+# goimports
+go install golang.org/x/tools/cmd/goimports@latest
+
+# go-outline
+go get -u github.com/ramya-rao-a/go-outline
+
+# gomodifytags
+go get -u github.com/fatih/gomodifytags
+go install github.com/fatih/gomodifytags@latest
+
+# gopkgs
+go get -v
+go install github.com/uudashr/gopkgs/v2/cmd/gopkgs@latest
+
+# goplay
+go get -u github.com/haya14busa/goplay/cmd/goplay
+
+# gopls
+go get -v golang.org/x/tools/gopls@latest
+go install golang.org/x/tools/gopls@latest
+
+# gotests
+go get -v
+go install github.com/cweill/gotests/gotests@latest
+
+# impl
+go get -v
+go install github.com/josharian/impl@latest
+
+# staticcheck
+go get honnef.co/go/tools/cmd/staticcheck
+go install honnef.co/go/tools/cmd/staticcheck@2022.1
+```
