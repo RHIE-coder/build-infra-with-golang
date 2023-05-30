@@ -66,3 +66,8 @@ protoc --go_out=. --go_opt=paths=source_relative \
     --go-grpc_out=. --go-grpc_opt=paths=source_relative \
     helloworld.proto
 ```
+
+## [Go-based gRPC]
+
+ - `*.pb.go` : 데이터 클래스 생성
+ - `*_grpc.pb.go` : 서버/클라이언트 인터페이스 생성(IO함수 포함)
