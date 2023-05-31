@@ -1,13 +1,27 @@
 package main
 
+/*
+ - grpc dial method
+ - 채널 + Context
+ - wg + mutex
+ - grpc middleware
+ - container
+ - net IPNet
+ - beanstalk
+*/
 import (
 	"context"
 	"fmt"
 	pb "golang/external/grpc/heartbeat/protobuf"
-	"log"
 	"net"
 
+	grpc_logrus "github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
+	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type server struct {
@@ -16,6 +30,15 @@ type server struct {
 
 func (s *server) Echo(ctx context.Context, in *pb.EchoRequest) (*pb.EchoResponse, error) {
 	log.Printf("Received: %v", in.GetSendMessage())
+	log.Debug(in.GetSendMessage())
+	if in.GetSendMessage() == "idiot" {
+		log.Warnf("client must be careful...")
+	}
+
+	if in.GetSendMessage() == "noob" {
+		log.Errorf("die, too angry")
+		panic("hello")
+	}
 	return &pb.EchoResponse{EchoMessage: "ECHO: " + in.GetSendMessage()}, nil
 }
 
@@ -55,7 +78,30 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
+	log.ErrorKey = "grpc.error"
+	logrusEntry := log.NewEntry(log.StandardLogger())
+	// Define customfunc to handle panic
+	customFunc := func(p interface{}) (err error) {
+		fmt.Println(p)
+		return status.Errorf(codes.Unknown, "panic triggered: %v", p)
+	}
+	// Shared options for the logger, with a custom gRPC code to log level function.
+	opts := []grpc_recovery.Option{
+		grpc_recovery.WithRecoveryHandler(customFunc),
+	}
+	s := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			grpc_ctxtags.UnaryServerInterceptor(
+				grpc_ctxtags.WithFieldExtractor(
+					grpc_ctxtags.CodeGenRequestFieldExtractor,
+				),
+			),
+
+			grpc_logrus.UnaryServerInterceptor(logrusEntry),
+			grpc_recovery.UnaryServerInterceptor(opts...),
+		),
+	)
+
 	pb.RegisterHerBeaServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {

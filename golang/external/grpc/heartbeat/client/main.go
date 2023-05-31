@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	pb "golang/external/grpc/heartbeat/protobuf"
 	"log"
 	"time"
@@ -22,17 +21,19 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	// r, err := c.Echo(ctx, &pb.EchoRequest{SendMessage: "awfnoiaesnfaoesinfoai"})
-	// if err != nil {
-	// 	log.Fatalf("could not echo: %v", err)
-	// }
-	// log.Printf("Get Echo Message: %s", r.GetEchoMessage())
-
-	r, err := c.Status(ctx, &pb.StatusRequest{Sender: "john"})
+	/* ECHO */
+	r, err := c.Echo(ctx, &pb.EchoRequest{SendMessage: "noob"})
 	if err != nil {
-		log.Fatalf("could not get status: %v", err)
+		log.Fatalf("could not echo: %v", err)
 	}
-	// fmt.Println(r.ProtoReflect().Descriptor())
-	jsonStr, _ := json.MarshalIndent(r, "", "  ")
-	log.Printf("Get Status From Server: %v", string(jsonStr))
+	log.Printf("Get Echo Message: %s", r.GetEchoMessage())
+
+	/* STATUS */
+	// r, err := c.Status(ctx, &pb.StatusRequest{Sender: "john"})
+	// if err != nil {
+	// 	log.Fatalf("could not get status: %v", err)
+	// }
+	// // fmt.Println(r.ProtoReflect().Descriptor())
+	// jsonStr, _ := json.MarshalIndent(r, "", "  ")
+	// log.Printf("Get Status From Server: %v", string(jsonStr))
 }
