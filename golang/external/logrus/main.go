@@ -13,9 +13,6 @@ type Person struct {
 }
 
 func main() {
-	logger := log.NewLogfmtLogger(os.Stderr)
-	component = "grpc-example"
-	rpcLogger := log.With(logger, "service", "gRPC/server", "component", component)
 	// Log as JSON instead of the default ASCII formatter.
 	log.SetFormatter(&log.JSONFormatter{})
 

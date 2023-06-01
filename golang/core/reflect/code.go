@@ -34,7 +34,7 @@ func HOW_TO_CHECK_STRUCT_MATCH() {
 		Name   string `json:"username"`
 		Age    int    `json:"age"`
 		Role   string `json:"role"`
-		Active bool   `json:"active,omitempt"`
+		Active bool   `json:"active,omitempty"`
 		// Description   string `json:"-"`
 		// NotIncludeVal string
 	}
@@ -47,17 +47,17 @@ func HOW_TO_CHECK_STRUCT_MATCH() {
 			return fmt.Errorf("invalid argument type, expected struct, got %T and %T", schema, obj)
 		}
 
-		for i := 0; i < s.NumField(); i++ {
-			schemaField := s.Field(i)
-			objField, ok := o.FieldByName(schemaField.Name)
-			if !ok {
-				return fmt.Errorf("need data field: %s", schemaField.Name)
-			}
-			// TODO: need research
-			if !objField.IsValid() || objField.IsZero() {
-				return fmt.Errorf("field '%s' is empty", objField.Name)
-			}
-		}
+		// for i := 0; i < s.NumField(); i++ {
+		// 	schemaField := s.Field(i)
+		// 	objField, ok := o.FieldByName(schemaField.Name)
+		// 	if !ok {
+		// 		return fmt.Errorf("need data field: %s", schemaField.Name)
+		// 	}
+		// 	// TODO: need research
+		// 	if !objField.IsValid() || objField.IsZero() {
+		// 		return fmt.Errorf("field '%s' is empty", objField.Name)
+		// 	}
+		// }
 
 		return nil
 	}
@@ -87,7 +87,7 @@ func HOW_TO_CHECK_STRUCT_VALUES() {
 		Name   string `json:"username"`
 		Age    int    `json:"age"`
 		Role   string `json:"role"`
-		Active bool   `json:"active,omitempt"`
+		Active bool   `json:"active,omitempty"`
 		// Description   string `json:"-"`
 		// NotIncludeVal string
 	}

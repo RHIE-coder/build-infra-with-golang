@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
+	"net"
 	"net/http"
 	"time"
 )
@@ -59,13 +61,6 @@ func USAGE_HTTP_HANDLER() {
 		}
 	}
 
-	/*
-	   curl -X POST "http://localhost:5000/api/point/mint" -H "Content-Type: application/json" -H "access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDYxODU0MTksImlhdCI6MTY3NDY0OTQxOSwiaXNzIjoiY2hvc3VuOmJsb2NrY2hhaW46YnJva2VyIiwic3ViIjoiY2hvc3VuYmMifQ.8fR_7ADmCIYX8PAiQMK88iY8wYDwFP9ced4jViqLFmk" -H "uuid: \"9cb251ca-fe4a-4d96-8ee5-a7bc623ec250\"" --data '{
-	       "address": "0xd1104e5ab60ae1573f59919e6e089d63d01ba3bc",
-	         "value": 11
-	       }'
-	*/
-
 	reqToServer := func() {
 		time.Sleep(3 * time.Second)
 		bodyData := []byte(`{"name": "John Doe", "age": 30}`)
@@ -92,9 +87,43 @@ func USAGE_HTTP_HANDLER() {
 	if err != nil {
 		fmt.Println("Failed to ListenAndServe : ", err)
 	}
+}
 
+func USAGE_IP() {
+	ipAddrs, err := net.InterfaceAddrs()
+	if err != nil {
+		log.Fatalf("fail to get ip address")
+	}
+	for _, addr := range ipAddrs {
+		ipnet, ok := addr.(*net.IPNet)
+		if !ok {
+			log.Fatalf("fail to assert")
+		}
+		fmt.Println(ipnet.IP)
+		fmt.Println(ipnet.Mask)
+		fmt.Println(ipnet.Mask.Size())
+		fmt.Println(ipnet.IP.IsLoopback())
+		fmt.Println(ipnet.IP.To4())
+		fmt.Println(ipnet.IP.To16())
+		fmt.Println("=====")
+	}
+}
+
+func USAGE_CIDR() {
+	ip := net.ParseIP("172.23.37.104")
+	mask := net.CIDRMask(20, 32)
+
+	ipnet := &net.IPNet{
+		IP:   ip,
+		Mask: mask,
+	}
+
+	cidr := ipnet.String()
+	fmt.Println(cidr)
 }
 
 func main() {
-	USAGE_HTTP_HANDLER()
+	// USAGE_IP()
+	USAGE_CIDR()
+	// USAGE_HTTP_HANDLER()
 }

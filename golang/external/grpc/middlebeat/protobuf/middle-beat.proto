@@ -1,0 +1,35 @@
+syntax="proto3";
+
+package middlebeat;
+
+option go_package = "middle-beat/prouf";
+
+service MiddleBeat {
+    rpc Status(StatusRequest) returns(StatusResponse) {};
+    rpc Echo(EchoRequest) returns(EchoResponse) {};
+}
+
+message Member {
+    string name=1;
+    uint32 age=2;
+    string role=3; 
+}
+
+message StatusRequest {
+    string sender=1;
+}
+
+message StatusResponse {
+    string receiver=1;
+    bool status=2;
+    string message=3;
+    repeated Member allowedMembers=4;
+    repeated string langs=5;
+}
+
+message EchoRequest {
+    string sendMessage=1;
+}
+message EchoResponse {
+    string echoMessage=1;
+}
