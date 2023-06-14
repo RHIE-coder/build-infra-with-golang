@@ -253,6 +253,67 @@ func USAGE_ATOMIC() {
 	fmt.Println(data)
 }
 
+func USAGE_SELECT() {
+	ch1 := make(chan int)
+	ch2 := make(chan string)
+	signal := make(chan bool)
+	wg := new(sync.WaitGroup)
+
+	wg.Add(1)
+	go func() {
+		fmt.Println("number sequence is started ")
+		time.Sleep(time.Second * 4)
+		ch1 <- 88
+	}()
+
+	wg.Add(1)
+	go func() {
+		fmt.Println("string sequence is started ")
+		time.Sleep(time.Second * 2)
+		ch2 <- "the score is..."
+	}()
+
+	go func() {
+	Loop:
+		select {
+		case score := <-ch1:
+			fmt.Println("score: ", score)
+			wg.Done()
+			goto Loop
+		case message := <-ch2:
+			fmt.Println(message)
+			fmt.Println("--------")
+			wg.Done()
+			goto Loop
+		case <-signal:
+		}
+	}()
+
+	wg.Wait()
+}
+
+func USEFUL_SELECT() {
+	terSig := make(chan bool)
+	go func() {
+		for i := 0; i < 4; i++ {
+			time.Sleep(time.Millisecond * 500)
+			if i%2 == 0 {
+				fmt.Println("tik")
+				continue
+			}
+			fmt.Println("tok")
+			if i == 3 {
+				terSig <- true
+			}
+		}
+	}()
+	// should use a simple channel send/receive instead of select with a single case (S1000) go-staticcheck
+	select {
+	case <-terSig:
+	}
+	fmt.Println("end...")
+}
+
 func main() {
 	// runtime.GOMAXPROCS(runtime.NumCPU())
 	fmt.Println("CPU NUM: ", runtime.NumCPU())
@@ -264,5 +325,7 @@ func main() {
 	// USAGE_COND_BROAD()
 	// USAGE_WAITGROUP()
 	// USAGE_POOL()
-	USAGE_ATOMIC()
+	// USAGE_ATOMIC()
+	// USAGE_SELECT()
+	USEFUL_SELECT()
 }
