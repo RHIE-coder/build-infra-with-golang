@@ -20,9 +20,16 @@ console.log(`https://${NETWORK}.infura.io/v3/${INFURA_API_KEY}`)
 module.exports = {
   solidity: "0.8.18",
   networks: {
-    sepolia: {
-      url: `https://${NETWORK}.infura.io/v3/${INFURA_API_KEY}`,
-      accounts: [PRIVATE_KEY],
+    ganache: {
+      url: "http://192.168.100.73:8999",
+      chainId:1337,
+      accounts: [
+        `6ff38a6fcde856869ddba8a1e0058a02cf81742f150607507d5245da607ba48f`,
+      ],
     },
+    // sepolia: {
+    //   url: `https://${NETWORK}.infura.io/v3/${INFURA_API_KEY}`,
+    //   accounts: [PRIVATE_KEY],
+    // },
   },
 };
