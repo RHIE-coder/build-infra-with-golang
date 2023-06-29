@@ -44,10 +44,17 @@ class JsonRpcDialer extends Dialer {
 
 
 (async()=>{
-    const caller = new JsonRpcDialer("http://192.168.100.73:8999");
+    // const caller = new JsonRpcDialer("http://192.168.100.73:8999");
+    // const caller = new JsonRpcDialer("http://localhost:8545");
+    const caller = new JsonRpcDialer("http://localhost:9545");
     console.log("request!")
     console.log(
-        await caller.call("net_listening")
+        await caller.call("eth_coinbase")
     )
+    // console.log(
+    //     BigInt(
+    //             (await caller.call("eth_chainId")).result
+    //         ).toString()
+    // )
     console.log("end")
 })()
