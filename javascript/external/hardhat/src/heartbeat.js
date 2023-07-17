@@ -37,7 +37,8 @@ class JsonRpcDialer extends Dialer {
         return (await this.request("post", {
             jsonrpc:"2.0",
             method,
-            params: params ?? [], 
+            params: params ?? [],
+            id:1, 
         })).data
     }
 }

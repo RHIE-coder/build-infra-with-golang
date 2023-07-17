@@ -1,5 +1,5 @@
 const sdk = require('./hub-luniverse-sdk');
-
+const axios = require('axios');
 (async()=>{
     require("dotenv").config(__dirname);
     
@@ -19,9 +19,16 @@ const sdk = require('./hub-luniverse-sdk');
     console.log(wallet2.mnemonic.phrase)
 
     const sender = wallet0.address
+    console.log(wallet0.privateKey)
     const receiver = "0xe7517164cBd1943eD5dffe1fbAC14E467Db41a75";
 
-    const api = new Luniverse("url")
+    const api = new Luniverse(axios.create({
+        baseURL: 'https://devapi.publish-hub.io/',
+        headers: {
+            Authorization: `Bearer ${process.env.JWT_TOKEN_DEV}`,
+            [`x-service-name`]:'newsthomas',
+        }
+    }))
 
     let resp;
     
@@ -58,8 +65,11 @@ const sdk = require('./hub-luniverse-sdk');
     const signedTx = signedTxHex.slice(2);
     console.log(signedTx);
 
-    resp = await api.sendTxn(signedTx);
-    const result = resp.data;
-    console.log(resp);
-    console.log(result);
+
+
+
+    // resp = await api.sendTxn(signedTx);
+    // const result = resp.data;
+    // console.log(resp);
+    // console.log(result);
 })()

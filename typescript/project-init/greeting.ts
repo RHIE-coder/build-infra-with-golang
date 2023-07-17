@@ -1,1 +1,2 @@
-console.log("hello world")
+import * as A from "./src/index"
+console.log(A)

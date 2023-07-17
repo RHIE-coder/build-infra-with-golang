@@ -13,9 +13,9 @@ export default [
         ],
         output: [
             {
-                file: "./test/dist/rollup-bundle.js",
+                file: "./dist/myts.js",
                 format: "umd",
-                name: "MyModule"
+                name: "myts"
             }
         ]
     },

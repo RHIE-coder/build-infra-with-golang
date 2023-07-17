@@ -1,5 +1,4 @@
 /* dependencies modules */
-const axios = require('axios');
 const { ethers } = require('ethers');
 
 class Validator {
@@ -25,20 +24,16 @@ class Validator {
 
 class Luniverse {
 
-    #baseURL
     #chainName
+    #inputedAxiosObject
 
-    constructor(originURL) {
-        if(originURL === undefined) {
-            throw new ReferenceError('"originURL" cannot be undefined')
+    constructor(axiosObject) {
+        if(axiosObject === undefined) {
+            throw new ReferenceError('"axiosObject" cannot be undefined');
         }
-        
-        this.#baseURL = originURL
-        this.#chainName = "luniverse"
-    }
-
-    get originURL() {
-        return this.#baseURL
+       
+        this.#inputedAxiosObject = axiosObject;
+        this.#chainName = "luniverse";
     }
 
     get chainName() {
@@ -47,9 +42,7 @@ class Luniverse {
 
     async request(reqObj) {
 
-        const client = axios.create({
-            baseURL: this.#baseURL,
-        })
+        const client = this.#inputedAxiosObject;
 
         if(reqObj.data){
             return (await client[reqObj.method](reqObj.url, reqObj.data)).data
@@ -171,4 +164,4 @@ const WalletHandler = {
 module.exports = {
     Luniverse,
     WalletHandler,
-}
+};

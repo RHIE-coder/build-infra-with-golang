@@ -1,14 +1,14 @@
 {
-  "name": "myts",
+  "name": "@types/myts",
   "version": "1.0.0",
   "description": "",
-  "main": "./dist/myts.js",
+  "types":"./src/index.d.ts",
   "scripts": {
     "build": "tsc --build",
     "bundle": "rollup -c --bundleConfigAsCjs"
   },
   "files":[
-    "./dist"
+    "./src"
   ],
   "keywords": [],
   "author": "",
