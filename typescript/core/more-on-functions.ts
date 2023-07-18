@@ -107,3 +107,8 @@ function sum({ a, b, c }: ABC) {
   console.log(a + b + c);
 }
 sum({ a: 10, b: 3, c: 9 }); // 22
+function add(a: string, b: string): string; // 시그니처 1
+function add(a: number, b: number): number; // 시그니처 2
+function add(a: any, b: any): any { // 구현된 함수
+  return a + b;
+}
