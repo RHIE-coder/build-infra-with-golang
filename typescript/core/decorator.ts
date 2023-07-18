@@ -27,13 +27,23 @@ function configurable(value: string) {
   };
 }
 
+const k1 = Symbol('one')
+const k2 = Symbol('two')
+
 function justCheck(){
     console.log("hfehfhefh")
-    return Reflect.metadata("ccccc", 33333);
+    return Reflect.metadata(k1, 3333);
 }
 function justCheck2(name:string){
     console.log("421-4r12hfsankgj")
-    return Reflect.metadata("dddd", 4444);
+    return Reflect.metadata(k2, 4444);
+}
+
+function justCheck3(){
+    return Reflect.metadata("c1c", "oppa");
+}
+function justCheck4(){
+    return Reflect.metadata("d1d", "zzang");
 }
 
 @Klazz("hello")
@@ -41,9 +51,11 @@ function justCheck2(name:string){
 class Validator{
 
     @justCheck()
+    @justCheck3()
     attrA:string
 
     @justCheck2("2321")
+    @justCheck4()
     nnn:number
 
     constructor(attrA:string, nnn:number){
@@ -82,6 +94,26 @@ console.log(Reflect.getOwnMetadata("key", C));
 
 
 console.log('412412');
+
+const formatMetadataKey = Symbol("format");
+function format(formatString: string) {
+  return Reflect.metadata(formatMetadataKey, formatString);
+}
+function getFormat(target: any, propertyKey: string) {
+  return Reflect.getMetadata(formatMetadataKey, target, propertyKey);
+}
+
+class Greeter {
+  @format("Hello, %s")
+  greeting: string;
+  constructor(message: string) {
+    this.greeting = message;
+  }
+  greet() {
+    let formatString = getFormat(this, "greeting");
+    return formatString.replace("%s", this.greeting);
+  }
+}
 (async()=>{
     console.log('+_-')
     console.log()
@@ -103,6 +135,8 @@ console.log('412412');
     console.log(valid.N)
     console.log(valid)
 
-    console.log(Reflect.getOwnMetadataKeys(valid.attrA))
-    console.log(Reflect.getOwnMetadataKeys(valid.nnn))
+    console.log(Reflect.getMetadata(k1, valid, "attrA"))
+    console.log(Reflect.getMetadata(k2, valid, "nnn"))
+    console.log(Reflect.getMetadata("c1c", valid, "attrA"))
+    console.log(Reflect.getMetadata("d1d", valid, "nnn"))
 })()
