@@ -114,7 +114,24 @@ class Greeter {
     return formatString.replace("%s", this.greeting);
   }
 }
+
+
+function wrapper(num:number) {
+    return function(target:any, propKey:string, descriptor:PropertyDescriptor) {
+        console.log("hhhh")
+    }
+}
+
+// not available
+// @wrapper(100)
+// function doSomethingHaHa() {
+//     console.log("just do it");
+// }
+
+
 (async()=>{
+
+    // doSomethingHaHa()
     console.log('+_-')
     console.log()
 
