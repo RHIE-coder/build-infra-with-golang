@@ -90,3 +90,20 @@ contract MyOtherContract {
         return message;
     }
 }
+
+
+contract Relayer {
+
+    address resource;
+    event Response(bool success, bytes data);
+
+    constructor(address _targetAddress) {
+        resource = _targetAddress;
+    }
+
+    function relay(address _sender, uint _value) public {
+        (bool isSuccess, bytes memory data) = resource.call{}(abi.encodeWithSignature("callMe(uint)", _value));
+
+        emit Response(isSuccess, data);
+    }
+}
