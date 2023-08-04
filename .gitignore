@@ -3,3 +3,5 @@
 node_modules
 nohup.out
 .dart_tool
+artifacts
+node_modules
