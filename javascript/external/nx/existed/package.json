@@ -1,0 +1,21 @@
+{
+  "name": "existed",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nx/jest": "^16.6.0",
+    "@types/jest": "^29.5.3",
+    "nx": "^16.6.0",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
