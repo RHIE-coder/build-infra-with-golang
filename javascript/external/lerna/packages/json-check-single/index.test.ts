@@ -1,4 +1,4 @@
-import {isValid} from 'json-check';
+import { isValid } from './index';
 
 test("1 is 1", () => {
   expect(1).toBe(1);

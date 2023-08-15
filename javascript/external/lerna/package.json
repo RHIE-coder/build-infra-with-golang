@@ -1,0 +1,19 @@
+{
+  "name": "lerna",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nx/jest": "^16.6.0",
+    "@types/jest": "^29.5.3",
+    "lerna": "^7.1.5",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
