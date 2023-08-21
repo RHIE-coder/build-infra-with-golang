@@ -4,5 +4,6 @@ import App from './App'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <App />
+        <App name={123}></App>
+        // <h1>adsfd</h1>
 );

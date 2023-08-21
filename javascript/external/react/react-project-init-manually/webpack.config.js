@@ -9,7 +9,7 @@ module.exports = {
         app : ['./src/index.jsx'], 
     },
     output:{
-        path: path.join(__dirname, '/dist'),
+        path: path.join(__dirname, 'dist'),
         filename : '[name].bundle.js'  
     },
     module : { 
@@ -17,8 +17,15 @@ module.exports = {
             test: /\.jsx?/,
             loader: 'babel-loader',
             options: {
-                presets: ['@babel/preset-env', '@babel/preset-react'],
+                presets: ['@babel/preset-env', ["@babel/preset-react", {"runtime": "automatic"}]],
             },
         }],
     },
-}
+    devServer: {
+        static: {
+            directory: path.join(__dirname, 'public'),
+        },
+        compress: true,
+        port: 9000,
+    },
+};
