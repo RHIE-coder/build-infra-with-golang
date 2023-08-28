@@ -17,7 +17,7 @@ contract ERC20AtomicSwap is Ownable{
     }
 
     /**
-     * @dev 
+     * @dev INVALID(swap has not been initialized), PENDING(swap is in progress), COMPLETE(swap has been redeemed), CANCELED(refunded)
      */
     enum Stage {
         INVALID,
@@ -29,11 +29,15 @@ contract ERC20AtomicSwap is Ownable{
     mapping(bytes32 => Swap) public _swaps;
     mapping(bytes32 => Stage) public _swapStatus;
 
+    event SwapCreated(bytes32 indexed secretHash, address tokenAddress, address sender, address receiver, uint256 amount);
+    event Redeemed(bytes32 indexed secretHash, bytes secret);
+    event Refunded(bytes32 secretHash);
+
 
     error InsufficientAllowance(address tokenAddress, address owner, address spender, uint256 amount,uint256 allowance);
 
     /**
-     * @dev 
+     * @dev create ERC20 swap info.
      */
     function createSwap(address tokenAddress_,address initiator_, address receiver_, bytes32 secretHash_, uint256 amount_) public onlyOwner {
 
@@ -63,10 +67,11 @@ contract ERC20AtomicSwap is Ownable{
         _swaps[secretHash_]=initSwap;
         _swapStatus[secretHash_]=Stage.PENDING;
 
+        emit SwapCreated(secretHash_, tokenAddress_, initiator_, receiver_, amount_);
     }
 
     /**
-     * @dev Redeem ERC20 token 
+     * @dev redeem ERC20 token 
      */
     function redeem(bytes memory secret_, bytes32 secretHash_) public onlyOwner {
 
@@ -85,7 +90,7 @@ contract ERC20AtomicSwap is Ownable{
     }
 
     /**
-     * @dev Refund ERC20 token
+     * @dev refund ERC20 token
      */
     function refund(bytes32 secretHash_) public onlyOwner {
         require(_swapStatus[secretHash_] != Stage.CANCELED, "swap is already canceled");
@@ -101,21 +106,30 @@ contract ERC20AtomicSwap is Ownable{
         _swapStatus[secretHash_] = Stage.CANCELED;
     }
 
+    /**
+     * @dev get swap info.
+     */
     function getSwap(bytes32 secretHash_) public view returns(Swap memory) {
         return _swaps[secretHash_];
     }
 
     /**
-     * @dev Check whether the swap is already redeemed or not
+     * @dev get status of swap
+     */
+    function getSwapStatus(bytes32 secretHash_) public view returns(Stage) {
+        return _swapStatus[secretHash_];
+    }
+
+    /**
+     * @dev check whether the swap is already redeemed or not
      */
     function isRedeemed(bytes32 secretHash) public view returns(bool) {
         require(_swapStatus[secretHash] != Stage.INVALID, "swap hash is not valid");
         return _swapStatus[secretHash] == Stage.COMPLETED ? true : false;
     }
-
     
     /**
-     * @dev Check whether the swap is already refunded or not
+     * @dev check whether the swap is already refunded or not
      */
     function isRefunded(bytes32 secretHash) public view returns(bool) {
         require(_swapStatus[secretHash] != Stage.INVALID, "swap hash is not valid");

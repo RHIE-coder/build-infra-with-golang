@@ -1,5 +1,10 @@
 package ethclient
 
+import (
+	"reflect"
+	"testing"
+)
+
 // import (
 // 	"testing"
 
@@ -47,3 +52,10 @@ package ethclient
 
 // func Test_has0xPrefix(t *testing.T) {
 // }
+func Test(t *testing.T) {
+	var a interface{}
+
+	b := reflect.TypeOf(a)
+
+	t.Log(b)
+}

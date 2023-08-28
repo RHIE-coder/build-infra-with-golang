@@ -2,7 +2,8 @@ package ethclient
 
 import (
 	"fmt"
-	"testing"
+	"reflect"
+	"strconv"
 )
 
 // import (
@@ -14,7 +15,7 @@ import (
 // 	"github.com/ethereum/go-ethereum/common/hexutil"
 // )
 
-func ConvertUintToString(num interface{}) (string, error) {
+func ConvertUintToString(num interface{}) string {
 	switch num.(type) {
 	case uint:
 	case uint8:
@@ -22,10 +23,10 @@ func ConvertUintToString(num interface{}) (string, error) {
 	case uint32:
 	case uint64:
 	default:
-		fmt.Errorf("")
+		return ""
 	}
-	// return strconv.FormatUint(num, 10), nil
-	return "", nil
+	assertedType, _ := num.(uint64)
+	return strconv.FormatUint(assertedType, 10)
 }
 
 // func ConvertStringToAddress(address string) common.Address {
@@ -91,8 +92,10 @@ func ConvertUintToString(num interface{}) (string, error) {
 // 	return len(input) >= 2 && input[0] == '0' && (input[1] == 'x' || input[1] == 'X')
 // }
 
-func Test(t *testing.T) {
+func AAA() {
 	var a interface{}
 
-	a.(type)
+	b := reflect.TypeOf(a)
+
+	fmt.Println(b)
 }
