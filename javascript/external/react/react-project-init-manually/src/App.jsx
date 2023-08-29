@@ -1,17 +1,16 @@
-import PropTypes from 'prop-types'
+import {Route, Routes} from 'react-router-dom';
+import About from './About';
+import Home from './Home';
+import Profile from './Profile';
 
-const App = props => {
+const App = () => {
     return (
-        <div>제이름은 {props.name}입니다.</div>
+        <Routes>
+            <Route path="/" element={<Home></Home>}></Route>
+            <Route path="/about" element={<About></About>}></Route>
+            <Route path="/profiles/:username" element={<Profile></Profile>}></Route>
+        </Routes>
     )
-}
-
-App.defaultProps = {
-    name: 'rhie-coder',
-}
-
-App.propTypes = {
-    name: PropTypes.string
 }
 
 export default App;
