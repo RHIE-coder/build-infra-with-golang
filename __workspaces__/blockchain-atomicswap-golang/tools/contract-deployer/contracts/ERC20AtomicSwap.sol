@@ -4,12 +4,15 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract ERC20AtomicSwap is Ownable{
 
+    /**
+     * @dev Swap Information
+     */
     struct Swap {
-        address tokenAddress;
         address sender;
         address receiver;
         bytes32 secretHash;
@@ -29,6 +32,14 @@ contract ERC20AtomicSwap is Ownable{
     mapping(bytes32 => Swap) public _swaps;
     mapping(bytes32 => Stage) public _swapStatus;
 
+    /**
+     * @dev Contract Name / Symbol / Address
+     */
+    address contractAddress;
+    string contractName;
+    string contractSymbol;
+    uint8 contractDecimals;
+
     event SwapCreated(bytes32 indexed secretHash, address tokenAddress, address sender, address receiver, uint256 amount);
     event Redeemed(bytes32 indexed secretHash, bytes secret);
     event Refunded(bytes32 secretHash);
@@ -36,38 +47,59 @@ contract ERC20AtomicSwap is Ownable{
 
     error InsufficientAllowance(address tokenAddress, address owner, address spender, uint256 amount,uint256 allowance);
 
+    constructor(address tokenAddress_) {
+       contractAddress = tokenAddress_; 
+       contractName = IERC20Metadata(tokenAddress_).name();
+       contractSymbol = IERC20Metadata(tokenAddress_).symbol();
+       contractDecimals = IERC20Metadata(tokenAddress_).decimals();
+    }
+
+    function name() public view returns(string memory) {
+        return contractName;
+    }
+
+    function symbol() public view returns(string memory) {
+        return contractSymbol;
+    }
+
+    function decimals() public view returns(uint8) {
+        return contractDecimals;
+    }
+
+    function addressOfContract() public view returns(address) {
+        return contractAddress;
+    }
     /**
      * @dev create ERC20 swap info.
      */
-    function createSwap(address tokenAddress_,address initiator_, address receiver_, bytes32 secretHash_, uint256 amount_) public onlyOwner {
+    function createSwap(address initiator_, address receiver_, bytes32 secretHash_, uint256 amount_) public onlyOwner {
 
         require(amount_ != 0, "the amount cannot be zero");
 
-        uint256 balance = IERC20(tokenAddress_).balanceOf(initiator_);
+        uint256 balance = IERC20(contractAddress).balanceOf(initiator_);
         require(balance >= amount_, "insufficient balance");
 
-        uint256 allowedAmount = IERC20(tokenAddress_).allowance(initiator_, address(this));
+        uint256 allowedAmount = IERC20(contractAddress).allowance(initiator_, address(this));
         if(allowedAmount == 0 || allowedAmount < amount_) {
-            revert InsufficientAllowance(tokenAddress_, initiator_, address(this), amount_, allowedAmount);
+            revert InsufficientAllowance(contractAddress, initiator_, address(this), amount_, allowedAmount);
         }
 
         require(_swapStatus[secretHash_] == Stage.INVALID, "hash is already exists");
         
         Swap memory initSwap = Swap({
-            tokenAddress: tokenAddress_,
             sender: initiator_,
             receiver: receiver_,
             secretHash: secretHash_,
             amount: amount_
         });
 
-        bool isTransferSuccess = IERC20(tokenAddress_).transferFrom(initiator_, address(this), amount_);
+        bool isTransferSuccess = IERC20(contractAddress).transferFrom(initiator_, address(this), amount_);
         require(isTransferSuccess, "fail to transfer");
 
         _swaps[secretHash_]=initSwap;
         _swapStatus[secretHash_]=Stage.PENDING;
 
-        emit SwapCreated(secretHash_, tokenAddress_, initiator_, receiver_, amount_);
+        emit SwapCreated(secretHash_, contractAddress, initiator_, receiver_, amount_);
     }
 
     /**
@@ -81,7 +113,7 @@ contract ERC20AtomicSwap is Ownable{
 
         require(keccak256(abi.encodePacked(secret_)) == pendingSwap.secretHash, "secret is not matched with swap");
 
-        bool isTransferSuccess = IERC20(pendingSwap.tokenAddress).transfer(pendingSwap.receiver, pendingSwap.amount);
+        bool isTransferSuccess = IERC20(contractAddress).transfer(pendingSwap.receiver, pendingSwap.amount);
 
         require(isTransferSuccess, "fail to transfer");
 
@@ -99,7 +131,7 @@ contract ERC20AtomicSwap is Ownable{
         Swap memory pendingSwap = _swaps[secretHash_];
 
 
-        bool isTransferSuccess = IERC20(pendingSwap.tokenAddress).transfer(pendingSwap.sender, pendingSwap.amount);
+        bool isTransferSuccess = IERC20(contractAddress).transfer(pendingSwap.sender, pendingSwap.amount);
 
         require(isTransferSuccess, "fail to transfer");
 
