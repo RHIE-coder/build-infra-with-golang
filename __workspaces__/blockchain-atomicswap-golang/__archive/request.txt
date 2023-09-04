@@ -1,0 +1,119 @@
+package internal
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/valyala/fasthttp"
+)
+
+const (
+	NEWS = "4647"
+	ETH  = "1027"
+	KRW  = "2798"
+	USD  = "2781"
+)
+
+// 요청 바디에 담을 데이터를 담는 구조체
+type User struct {
+	Username string `json:"username"`
+	Age      int    `json:"age"`
+	Hobby    string `json:"hobby"`
+}
+
+type VolumeCapData struct {
+	Data map[string]struct {
+		Id          int    `json:"id"`
+		CurrenyName string `json:"name"`
+		Quotes      []struct {
+			Quote map[string]struct {
+				MarketCap             float64 `json:"market_cap"`
+				Volume24h             float64 `json:"volume_24h"`
+				Price                 float64 `json:"price"`
+				PriceChangePercentage float64 `json:"percent_change_24h"`
+			} `json:"quote"`
+			Timestamp string `json:"timestamp"`
+		} `json:"quotes"`
+	} `json:"data"`
+}
+
+func CoinMarket() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	url := "https://pro-api.coinmarketcap.com/v3/cryptocurrency/quotes/historical?id=1027,4647&convert_id=2798,2781"
+
+	fmt.Println(os.Getenv("COINMARKET_API_KEY"))
+	req := fasthttp.AcquireRequest()
+	defer fasthttp.ReleaseRequest(req)
+
+	req.Header.SetMethod("GET")
+	req.Header.SetRequestURI(url)
+
+	req.Header.SetContentType("application/json")
+	req.Header.Set("X-CMC_PRO_API_KEY", os.Getenv("COINMARKET_API_KEY"))
+
+	resp := fasthttp.AcquireResponse()
+	defer fasthttp.ReleaseResponse(resp)
+	if err := fasthttp.Do(req, resp); err != nil {
+		panic(err)
+	}
+	var out VolumeCapData
+	json.Unmarshal(resp.Body(), &out)
+	var response VolumeCapData
+	err = json.Unmarshal(resp.Body(), &response)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	quoteArr := response.Data["1027"].Quotes
+	fmt.Println(quoteArr[len(quoteArr)-1].Timestamp)
+}
+
+func Requester() { // https://httpbin.org/get
+	url := "http://example.com/example"
+
+	// 요청 바디에 담을 데이터
+	user := User{
+		Username: "john_doe",
+		Age:      30,
+		Hobby:    "reading",
+	}
+
+	// 요청 바디를 JSON 형식으로 인코딩
+	reqBody, err := json.Marshal(user)
+	if err != nil {
+		panic(err)
+	}
+
+	// fasthttp 객체 풀에서 Conn 객체 가져오기
+	req := fasthttp.AcquireRequest()
+	defer fasthttp.ReleaseRequest(req)
+
+	// 요청 메서드와 경로 설정
+	req.Header.SetMethod("POST")
+	req.Header.SetRequestURI(url)
+
+	// 요청 헤더 설정
+	req.Header.SetContentType("application/json")
+	req.Header.SetContentLength(len(reqBody))
+
+	// 요청 바디 설정
+	req.SetBody(reqBody)
+
+	// fasthttp 객체 풀에서 Conn 객체 가져오기
+	resp := fasthttp.AcquireResponse()
+	defer fasthttp.ReleaseResponse(resp)
+
+	// POST 요청 보내기
+	if err := fasthttp.Do(req, resp); err != nil {
+		panic(err)
+	}
+
+	// 응답 결과 출력
+	fmt.Println(string(resp.Body()))
+}
