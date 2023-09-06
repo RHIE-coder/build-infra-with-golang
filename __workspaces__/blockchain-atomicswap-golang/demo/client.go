@@ -17,3 +17,7 @@ func NewClient(url string) (*EthereumClient, error) {
 		dialer: client,
 	}, nil
 }
+
+func (client *EthereumClient) GetClient() *ethclient.Client {
+	return client.dialer
+}

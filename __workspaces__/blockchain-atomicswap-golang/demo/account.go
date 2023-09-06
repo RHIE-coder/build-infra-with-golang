@@ -3,21 +3,36 @@ package demo
 import (
 	"context"
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/ethereum/go-ethereum/common"
 )
 
-func (client *EthereumClient) PendingNonceAt(address string) (string, error) {
-	isValid := common.IsHexAddress(address)
+type AdminAccount struct {
+	address    string
+	privateKey string
+	rpc        *EthereumClient
+}
+
+func NewAccount(client *EthereumClient, address string, privateKey string) *AdminAccount {
+	return &AdminAccount{
+		address:    address,
+		privateKey: privateKey,
+		rpc:        client,
+	}
+}
+
+func (admin *AdminAccount) PendingNonceAt() (string, error) {
+	isValid := common.IsHexAddress(admin.address)
+
 	if !isValid {
 		return "", fmt.Errorf("address is not valid")
 	}
-	accountAddress := common.HexToAddress(address)
-	nonce, err := client.dialer.PendingNonceAt(context.Background(), accountAddress)
+
+	nonce, err := admin.rpc.dialer.PendingNonceAt(context.Background(), common.HexToAddress(admin.address))
 	if err != nil {
-		log.Fatal(err.Error())
+		return "", fmt.Errorf("fail to jsonrpc request")
 	}
+
 	return strconv.FormatUint(nonce, 10), nil
 }

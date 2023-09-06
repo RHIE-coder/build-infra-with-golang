@@ -1,13 +1,8 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"os"
 	demo "singaporedemo"
-
-	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/joho/godotenv"
 )
 
 const network = "ganache"
@@ -16,33 +11,33 @@ const network = "ganache"
 
 func main() {
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
-	// url := ParseEndPoint(network)
+	// // url := ParseEndPoint(network)
 
-	cmd := os.Args[1]
-	controller := demo.NewAtomicSwapController(
-		os.Getenv("LOCAL_TOKEN_ORIGIN"),
-		os.Getenv("LOCAL_TOKEN_DESTINATION"),
-		os.Getenv("LOCAL_ATOMICSWAP_CONTRACT_ORIGIN"),
-		os.Getenv("LOCAL_ATOMICSWAP_CONTRACT_DESTINATION"),
-	)
+	// cmd := os.Args[1]
+	// controller := demo.NewAtomicSwapDispacher(
+	// 	os.Getenv("LOCAL_TOKEN_ORIGIN"),
+	// 	os.Getenv("LOCAL_TOKEN_DESTINATION"),
+	// 	os.Getenv("LOCAL_ATOMICSWAP_CONTRACT_ORIGIN"),
+	// 	os.Getenv("LOCAL_ATOMICSWAP_CONTRACT_DESTINATION"),
+	// )
 
-	client, err := ethclient.Dial(ParseEndPoint(network))
+	// client, err := ethclient.Dial(ParseEndPoint(network))
 
-	if err != nil {
-		fmt.Println("init client error")
-	}
+	// if err != nil {
+	// 	fmt.Println("init client error")
+	// }
 
-	switch cmd {
-	case "info":
-		controller.Info()
-	case "chainid":
-		fmt.Println()
-	}
+	// switch cmd {
+	// case "info":
+	// 	controller.Info()
+	// case "chainid":
+	// 	fmt.Println()
+	// }
 }
 
 func ParseEndPoint(network string) string {
