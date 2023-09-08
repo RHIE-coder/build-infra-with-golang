@@ -45,3 +45,19 @@ func ParseIntegerStringToDecimalString(amount string, decimals string) (string, 
 	return strings.TrimRight(str, "0"), nil
 
 }
+
+func EthToWei(amount string) (string, error) {
+	return ParseDecimalStringToIntegerString(amount, "18")
+}
+
+func EthToGwei(amount string) (string, error) {
+	return ParseDecimalStringToIntegerString(amount, "9")
+}
+
+func WeiToEth(amount string) (string, error) {
+	return ParseIntegerStringToDecimalString(amount, "18")
+}
+
+func GweiToEth(amount string) (string, error) {
+	return ParseIntegerStringToDecimalString(amount, "9")
+}

@@ -6,7 +6,7 @@ type Provider struct {
 	dialer *ethclient.Client
 }
 
-func NewClient(url string) (*Provider, error) {
+func NewProvider(url string) (*Provider, error) {
 	client, err := ethclient.Dial(url)
 	if err != nil {
 		return nil, err
@@ -14,4 +14,8 @@ func NewClient(url string) (*Provider, error) {
 	return &Provider{
 		dialer: client,
 	}, nil
+}
+
+func (client *Provider) GetClient() *ethclient.Client {
+	return client.dialer
 }

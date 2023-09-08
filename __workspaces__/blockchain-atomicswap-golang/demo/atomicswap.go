@@ -55,3 +55,5 @@ const (
 	POINT SwapTargetERC20 = iota
 	TOKEN
 )
+
+type AtomicSwapContract struct{}

@@ -9,7 +9,8 @@ const axios = require('axios');
     } = sdk;
 
     console.log(WalletHandler.generateMnemonic())
-    const mnemonic = process.env.LUNIVERSE_MNEMONIC;
+    // const mnemonic = process.env.LUNIVERSE_MNEMONIC;
+    const mnemonic = WalletHandler.generateMnemonic();
     const wallet0 = WalletHandler.createWalletFromMnemonic(mnemonic);
     const wallet1 = WalletHandler.createWalletFromMnemonic(mnemonic, 1);
     const wallet2 = WalletHandler.createWalletFromMnemonic(mnemonic, 2);
@@ -23,7 +24,8 @@ const axios = require('axios');
     const receiver = "0xe7517164cBd1943eD5dffe1fbAC14E467Db41a75";
 
     const api = new Luniverse(axios.create({
-        baseURL: 'https://devapi.publish-hub.io/',
+        // baseURL: 'https://devapi.publish-hub.io/',
+        baseURL: 'http://localhost:5000',
         headers: {
             Authorization: `Bearer ${process.env.JWT_TOKEN_DEV}`,
             [`x-service-name`]:'newsthomas',
@@ -45,7 +47,7 @@ const axios = require('axios');
 
 
     resp = await api.tokenRawTxn({
-        amount: "0.0001",
+        amount: "0.0003",
         from:sender,
         to: receiver,
     })
@@ -68,8 +70,8 @@ const axios = require('axios');
 
 
 
-    // resp = await api.sendTxn(signedTx);
-    // const result = resp.data;
-    // console.log(resp);
-    // console.log(result);
+    resp = await api.sendTxn(signedTx);
+    const result = resp.data;
+    console.log(resp);
+    console.log(result);
 })()
