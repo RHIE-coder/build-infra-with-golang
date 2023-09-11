@@ -1,6 +1,7 @@
 package demo
 
 const ERC20ATOMICSWAP_ABI = `[
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -185,7 +186,7 @@ const ERC20ATOMICSWAP_ABI = `[
     },
     {
       "inputs": [],
-      "name": "addressOfContract",
+      "name": "addressOfTargetContract",
       "outputs": [
         {
           "internalType": "address",

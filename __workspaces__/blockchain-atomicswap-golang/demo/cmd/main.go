@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum"
-	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -44,26 +43,26 @@ func main() {
 		demo.NewERC20AtomicSwapContract().SetAddress(demo.LOCAL_ATOMICSWAP_POINT_ADDR),
 		demo.NewERC20AtomicSwapContract().SetAddress(demo.LOCAL_ATOMICSWAP_TOKEN_ADDR),
 	)
-	pointSwap := dispatcher.GetERC20Swap(demo.POINT_SWAP)
-	fmt.Println(pointSwap)
-	abiJson, err := abi.JSON(strings.NewReader(demo.ERC20ATOMICSWAP_ABI))
-	if err != nil {
-		panic(err)
-	}
-	inputBytes, err := abiJson.Pack("symbol")
-	if err != nil {
-		panic(err)
-	}
-	contract := common.HexToAddress(demo.LOCAL_ATOMICSWAP_POINT_ADDR)
-	symbolMsg := ethereum.CallMsg{
-		To:   &contract,
-		Data: inputBytes,
-	}
-	symbolBytes, err := client.CallContract(symbolMsg)
-	fmt.Println(string(symbolBytes))
+	// pointSwap := dispatcher.GetERC20Swap(demo.POINT_SWAP)
+	// fmt.Println(pointSwap)
+	// abiJson, err := abi.JSON(strings.NewReader(demo.ERC20ATOMICSWAP_ABI))
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// inputBytes, err := abiJson.Pack("symbol")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// contract := common.HexToAddress(demo.LOCAL_ATOMICSWAP_POINT_ADDR)
+	// symbolMsg := ethereum.CallMsg{
+	// 	To:   &contract,
+	// 	Data: inputBytes,
+	// }
+	// symbolBytes, err := client.CallContract(symbolMsg)
+	// fmt.Println(string(symbolBytes))
 
-	// prepare(dispatcher)
-	// checkBalanceOf(dispatcher)
+	prepare(dispatcher)
+	checkBalanceOf(dispatcher)
 	// transferOwnerPointToUser(dispatcher)
 	// allowToPointContract(dispatcher)
 	// allowToTokenContract(dispatcher)
@@ -76,10 +75,10 @@ func main() {
 }
 
 func prepare(dispatcher *demo.SwapDispatcher) {
+	log.Println("   ---   prepare   ---")
 	dispatcher.SetMetadataByCall(demo.POINT)
 	dispatcher.SetMetadataByCall(demo.TOKEN)
-	err := dispatcher.SetMetadataByCall(demo.POINT_SWAP)
-	fmt.Println(err)
+	dispatcher.SetMetadataByCall(demo.POINT_SWAP)
 	dispatcher.SetMetadataByCall(demo.TOKEN_SWAP)
 	log.Println(dispatcher.GetERC20(demo.POINT).GetMetaData())
 	log.Println(dispatcher.GetERC20(demo.TOKEN).GetMetaData())
@@ -88,6 +87,7 @@ func prepare(dispatcher *demo.SwapDispatcher) {
 }
 
 func checkBalanceOf(dispatcher *demo.SwapDispatcher) {
+	log.Println("   ---   checkBalanceOf   ---")
 	point := demo.NewERC20Contract()
 	// token := demo.NewERC20Contract(demo.LOCAL_TOKEN_ADDR)
 	// pointSwap := demo.NewERC20Contract(LOCAL_ATOMICSWAP_POINT_ADDR)
@@ -98,28 +98,36 @@ func checkBalanceOf(dispatcher *demo.SwapDispatcher) {
 		panic(err)
 	}
 
-	fmt.Println(balanceOfMsg)
+	pointAdmin, err := dispatcher.GetERC20(demo.POINT).BalanceOf(ADMIN_DEPLOYER)
+	pointUser, err := dispatcher.GetERC20(demo.TOKEN).BalanceOf(USER)
+	tokenAdmin, err := dispatcher.GetERC20(demo.POINT_SWAP).BalanceOf(ADMIN_DEPLOYER)
+	tokenUser, err := dispatcher.GetERC20(demo.TOKEN_SWAP).BalanceOf(USER)
 
 }
 
 func transferOwnerPointToUser(dispatcher *demo.SwapDispatcher) { // faucet
 
+	log.Println("   ---   transferOwnerPointToUser   ---")
 }
 
 func allowToPointContract(dispatcher *demo.SwapDispatcher) {
 
+	log.Println("   ---   allowToPointContract   ---")
 }
 
 func allowToTokenContract(dispatcher *demo.SwapDispatcher) {
 
+	log.Println("   ---   allowToTokenContract   ---")
 }
 
 func checkAllowance(dispatcher *demo.SwapDispatcher) {
 
+	log.Println("   ---   checkAllowance   ---")
 }
 
 func createSwapPoint(dispatcher *demo.SwapDispatcher) {
 
+	log.Println("   ---   createSwapPoint   ---")
 }
 
 func checkTxToKnowSecretHash(dispatcher *demo.SwapDispatcher) {
@@ -128,6 +136,7 @@ func checkTxToKnowSecretHash(dispatcher *demo.SwapDispatcher) {
 
 func redeemPoint(dispatcher *demo.SwapDispatcher) {
 
+	log.Println("   ---   redeemPoint   ---")
 }
 
 func checkTxToKnowSecret(dispatcher *demo.SwapDispatcher) {
@@ -136,6 +145,7 @@ func checkTxToKnowSecret(dispatcher *demo.SwapDispatcher) {
 
 func redeemToken(dispatcher *demo.SwapDispatcher) {
 
+	log.Println("   ---   redeemToken   ---")
 }
 
 func test2() {

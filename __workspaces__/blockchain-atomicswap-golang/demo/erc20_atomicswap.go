@@ -82,6 +82,7 @@ func (atomicSwap *ERC20AtomicSwapContract) GetAddress() string {
 }
 
 func (atomicSwap *ERC20AtomicSwapContract) SetMetaData(name string, symbol string, decimals string, swapTargetAddress string) *ERC20AtomicSwapContract {
+	// fmt.Println(swapTargetAddress)
 	atomicSwap.name = name
 	atomicSwap.symbol = symbol
 	atomicSwap.decimals = decimals

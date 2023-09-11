@@ -6,6 +6,7 @@ import (
 	"math/big"
 
 	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 type ContractType int
@@ -102,7 +103,7 @@ func (dispatcher *SwapDispatcher) SetMetadataByCall(contractType ContractType) e
 			string(symbolBytes),
 			new(big.Int).SetBytes(decimalsBytes).String(),
 		)
-
+		return nil
 	case TOKEN:
 		erc20Token := dispatcher.GetERC20(TOKEN)
 
@@ -137,7 +138,7 @@ func (dispatcher *SwapDispatcher) SetMetadataByCall(contractType ContractType) e
 			string(symbolBytes),
 			new(big.Int).SetBytes(decimalsBytes).String(),
 		)
-
+		return nil
 	case POINT_SWAP:
 		pointSwap := dispatcher.GetERC20Swap(POINT_SWAP)
 
@@ -179,11 +180,11 @@ func (dispatcher *SwapDispatcher) SetMetadataByCall(contractType ContractType) e
 			string(nameBytes),
 			string(symbolBytes),
 			new(big.Int).SetBytes(decimalsBytes).String(),
-			string(addressOfTargetContractBytes),
+			common.BytesToAddress(addressOfTargetContractBytes).Hex(),
 		)
-
+		return nil
 	case TOKEN_SWAP:
-		tokenSwap := dispatcher.GetERC20Swap(POINT_SWAP)
+		tokenSwap := dispatcher.GetERC20Swap(TOKEN_SWAP)
 
 		nameMsg, err := tokenSwap.Name()
 		if err != nil {
@@ -218,14 +219,13 @@ func (dispatcher *SwapDispatcher) SetMetadataByCall(contractType ContractType) e
 		if err != nil {
 			return fmt.Errorf("tokenSwap: %s", err.Error())
 		}
-
 		tokenSwap.SetMetaData(
 			string(nameBytes),
 			string(symbolBytes),
 			new(big.Int).SetBytes(decimalsBytes).String(),
-			string(addressOfTargetContractBytes),
+			common.BytesToAddress(addressOfTargetContractBytes).Hex(),
 		)
-
+		return nil
 	}
 	return fmt.Errorf("not found contract type")
 }
