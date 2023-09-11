@@ -66,7 +66,7 @@ contract ERC20AtomicSwap is Ownable{
         return contractDecimals;
     }
 
-    function addressOfContract() public view returns(address) {
+    function addressOfTargetContract() public view returns(address) {
         return contractAddress;
     }
     /**

@@ -10,7 +10,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 )
 
-type Account struct {
+type EthereumAccount struct {
 	privateKey          *ecdsa.PrivateKey
 	publicKey           *ecdsa.PublicKey
 	mnemonic            string
@@ -20,7 +20,7 @@ type Account struct {
 	isCreatedByMnemonic bool
 }
 
-func NewAccountFromPrivateKey(privateKeyHex string) (*Account, error) {
+func NewAccountFromPrivateKey(privateKeyHex string) (*EthereumAccount, error) {
 	privateKeyECDSA, err := crypto.HexToECDSA(strings.TrimPrefix(privateKeyHex, "0x"))
 	if err != nil {
 		return nil, fmt.Errorf("fail to get private key")
@@ -31,7 +31,7 @@ func NewAccountFromPrivateKey(privateKeyHex string) (*Account, error) {
 		return nil, fmt.Errorf("fail to get public key")
 	}
 	address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
-	return &Account{
+	return &EthereumAccount{
 		privateKey:          privateKeyECDSA,
 		publicKey:           publicKeyECDSA,
 		mnemonic:            "",
@@ -42,18 +42,28 @@ func NewAccountFromPrivateKey(privateKeyHex string) (*Account, error) {
 	}, nil
 }
 
-func NewAccountFromMnemonic(mnemonic string, index int, path string) (*Account, error) {
+func NewAccountFromMnemonic(mnemonic string, index int, path string) (*EthereumAccount, error) {
 	return nil, nil
 }
 
-func (account *Account) GetPrivateKey() string {
+func (account *EthereumAccount) GetPrivateKey() string {
 	return hex.EncodeToString(crypto.FromECDSA(account.privateKey))
 }
 
-func (account *Account) GetPublicKey() string {
+func (account *EthereumAccount) GetPublicKey() string {
 	return hex.EncodeToString(crypto.FromECDSAPub(account.publicKey))
 }
 
-func (account *Account) SignTx(tx types.TxData) {
+func (account *EthereumAccount) SignTx(tx EIP1559Tx) (*types.Transaction, error) {
+	signedTx, err := types.SignTx(
+		tx.GetTxForSigning(),
+		types.NewCancunSigner(tx.ChainID),
+		account.privateKey,
+	)
 
+	if err != nil {
+		return nil, fmt.Errorf("fail to sign the transaction")
+	}
+
+	return signedTx, nil
 }

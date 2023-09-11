@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
 	"log"
 	"math/big"
@@ -9,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -20,14 +22,134 @@ const GOERLI = "https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"
 const ADMIN_DEPLOYER = "0x872d3d0d6C5c1C0f5E8f9EEc2c4236cc9b5AB823"
 const USER = "0xd5a38dD251Aa8493C03954268FF851290051E634"
 const prikey = "6ff38a6fcde856869ddba8a1e0058a02cf81742f150607507d5245da607ba48f"
+const secret = "6d733fa2adc868bcb7f263e2e278125dc88e0f67eea1b106d75e77da91fb730359ca5c362c76c5ab8a0032889acfacc2ed2bc848ad97f43e152af6448d1819a1f3f27627f870658225b401057aa78824ae140aa3e5ba878fca693e6bf110b0f366b5d28de9d44b705783a5cbf51557a90c960d090d24aa33f33650d7c0f81b16"
+const secretHash = "a757feec92c62bfd91fcef3b0a16a97650aea0999531a75cbc09192dd2089f1c"
 
 func main() {
-	test()
+	client, err := demo.NewProvider(GANACHE)
+	if err != nil {
+		panic(err)
+	}
+
+	signer, err := demo.NewAccountFromPrivateKey(prikey)
+	if err != nil {
+		panic(err)
+	}
+
+	dispatcher := demo.NewSwapDispatcher(
+		client,
+		signer,
+		demo.NewERC20Contract().SetAddress(demo.LOCAL_POINT_ADDR),
+		demo.NewERC20Contract().SetAddress(demo.LOCAL_TOKEN_ADDR),
+		demo.NewERC20AtomicSwapContract().SetAddress(demo.LOCAL_ATOMICSWAP_POINT_ADDR),
+		demo.NewERC20AtomicSwapContract().SetAddress(demo.LOCAL_ATOMICSWAP_TOKEN_ADDR),
+	)
+	pointSwap := dispatcher.GetERC20Swap(demo.POINT_SWAP)
+	fmt.Println(pointSwap)
+	abiJson, err := abi.JSON(strings.NewReader(demo.ERC20ATOMICSWAP_ABI))
+	if err != nil {
+		panic(err)
+	}
+	inputBytes, err := abiJson.Pack("symbol")
+	if err != nil {
+		panic(err)
+	}
+	contract := common.HexToAddress(demo.LOCAL_ATOMICSWAP_POINT_ADDR)
+	symbolMsg := ethereum.CallMsg{
+		To:   &contract,
+		Data: inputBytes,
+	}
+	symbolBytes, err := client.CallContract(symbolMsg)
+	fmt.Println(string(symbolBytes))
+
+	// prepare(dispatcher)
+	// checkBalanceOf(dispatcher)
+	// transferOwnerPointToUser(dispatcher)
+	// allowToPointContract(dispatcher)
+	// allowToTokenContract(dispatcher)
+	// checkAllowance(dispatcher)
+	// createSwapPoint(dispatcher)
+	// checkTxToKnowSecretHash(dispatcher) // Optional Now
+	// redeemPoint(dispatcher)
+	// checkTxToKnowSecret(dispatcher) // Optional Now
+	// redeemToken(dispatcher)
 }
-func WeiToEth(wei *big.Int) *big.Float {
-	weiInEth := new(big.Float).SetInt(wei)
-	ethValue := new(big.Float).Quo(weiInEth, big.NewFloat(1e18))
-	return ethValue
+
+func prepare(dispatcher *demo.SwapDispatcher) {
+	dispatcher.SetMetadataByCall(demo.POINT)
+	dispatcher.SetMetadataByCall(demo.TOKEN)
+	err := dispatcher.SetMetadataByCall(demo.POINT_SWAP)
+	fmt.Println(err)
+	dispatcher.SetMetadataByCall(demo.TOKEN_SWAP)
+	log.Println(dispatcher.GetERC20(demo.POINT).GetMetaData())
+	log.Println(dispatcher.GetERC20(demo.TOKEN).GetMetaData())
+	log.Println(dispatcher.GetERC20Swap(demo.POINT_SWAP).GetMetaData())
+	log.Println(dispatcher.GetERC20Swap(demo.TOKEN_SWAP).GetMetaData())
+}
+
+func checkBalanceOf(dispatcher *demo.SwapDispatcher) {
+	point := demo.NewERC20Contract()
+	// token := demo.NewERC20Contract(demo.LOCAL_TOKEN_ADDR)
+	// pointSwap := demo.NewERC20Contract(LOCAL_ATOMICSWAP_POINT_ADDR)
+	// tokenSwap := demo.NewERC20Contract(LOCAL_ATOMICSWAP_TOKEN_ADDR)
+
+	balanceOfMsg, err := point.BalanceOf(ADMIN_DEPLOYER)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(balanceOfMsg)
+
+}
+
+func transferOwnerPointToUser(dispatcher *demo.SwapDispatcher) { // faucet
+
+}
+
+func allowToPointContract(dispatcher *demo.SwapDispatcher) {
+
+}
+
+func allowToTokenContract(dispatcher *demo.SwapDispatcher) {
+
+}
+
+func checkAllowance(dispatcher *demo.SwapDispatcher) {
+
+}
+
+func createSwapPoint(dispatcher *demo.SwapDispatcher) {
+
+}
+
+func checkTxToKnowSecretHash(dispatcher *demo.SwapDispatcher) {
+	// Optional Now
+}
+
+func redeemPoint(dispatcher *demo.SwapDispatcher) {
+
+}
+
+func checkTxToKnowSecret(dispatcher *demo.SwapDispatcher) {
+	// Optional Now
+}
+
+func redeemToken(dispatcher *demo.SwapDispatcher) {
+
+}
+
+func test2() {
+	randomData := make([]byte, 128)
+
+	_, err := rand.Read(randomData)
+	if err != nil {
+		panic(err)
+	}
+
+	hash := crypto.Keccak256Hash(randomData)
+
+	fmt.Printf("Random Data: %x\n", randomData)
+	fmt.Printf("Keccak256 Hash: %s\n", hash.Hex())
 }
 
 func test() {
@@ -67,6 +189,7 @@ func test() {
 		// From:  sender,
 		To:    &receiver,
 		Value: sendAmount,
+		Data:  nil,
 	}
 
 	gasLimit, _ := client.EstimateGas(context.Background(), msg)
@@ -98,7 +221,9 @@ func test() {
 		Data:      nil,
 	})
 
-	signedTx, err := types.SignTx(tx, types.NewLondonSigner(chainId), privateKey)
+	// signer.SignTx(tx)
+
+	signedTx, err := types.SignTx(tx, types.NewCancunSigner(chainId), privateKey)
 	if err != nil {
 		log.Fatal(err)
 	}

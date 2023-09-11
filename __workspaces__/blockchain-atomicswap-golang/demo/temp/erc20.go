@@ -193,3 +193,16 @@ func (erc20 *ERC20Contract) BalanceOf(address string) (string, error) {
 func (erc20 *ERC20Contract) Address() string {
 	return erc20.contractAddress
 }
+
+type ERC20 interface {
+	Name() string
+	GetName() string
+	Symbol() (string, error)
+	GetSymbol() string
+	Decimals() (string, error)
+	GetDecimals() string
+	Approve(string, string) (bool, error)
+	Allowance(string, string) (string, error)
+	Transfer(string, string) (bool, error)
+	ContractAddress() string
+}
