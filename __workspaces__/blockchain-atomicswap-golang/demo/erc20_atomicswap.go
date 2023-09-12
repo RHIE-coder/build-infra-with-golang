@@ -72,17 +72,21 @@ func NewERC20AtomicSwapContract() *ERC20AtomicSwapContract {
 		abi: abiJson,
 	}
 }
-func (atomicSwap *ERC20AtomicSwapContract) SetAddress(contractAddress string) *ERC20AtomicSwapContract {
+
+func (atomicSwap *ERC20AtomicSwapContract) SetAddressByString(contractAddress string) *ERC20AtomicSwapContract {
 	atomicSwap.contractAddress = common.HexToAddress(contractAddress)
 	return atomicSwap
 }
 
-func (atomicSwap *ERC20AtomicSwapContract) GetAddress() string {
+func (atomicSwap *ERC20AtomicSwapContract) GetAddress() common.Address {
+	return atomicSwap.contractAddress
+}
+
+func (atomicSwap *ERC20AtomicSwapContract) GetAddressAsString() string {
 	return atomicSwap.contractAddress.Hex()
 }
 
 func (atomicSwap *ERC20AtomicSwapContract) SetMetaData(name string, symbol string, decimals string, swapTargetAddress string) *ERC20AtomicSwapContract {
-	// fmt.Println(swapTargetAddress)
 	atomicSwap.name = name
 	atomicSwap.symbol = symbol
 	atomicSwap.decimals = decimals

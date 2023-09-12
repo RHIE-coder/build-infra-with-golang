@@ -5,10 +5,11 @@ import (
 	"math/big"
 	"strconv"
 	"strings"
+
+	"github.com/ethereum/go-ethereum/common"
 )
 
 func ParseDecimalStringToIntegerString(amount string, decimals string) (string, error) {
-
 	amountBigFlt := new(big.Float)
 	_, _, err := amountBigFlt.Parse(amount, 10)
 	if err != nil {
@@ -43,7 +44,6 @@ func ParseIntegerStringToDecimalString(amount string, decimals string) (string, 
 	result := new(big.Float).Quo(new(big.Float).SetInt(amountBigInt), new(big.Float).SetInt(scaleFactor))
 	str := result.Text('f', int(decimalsNum))
 	return strings.TrimRight(str, "0"), nil
-
 }
 
 func EthToWei(amount string) (string, error) {
@@ -60,4 +60,16 @@ func WeiToEth(amount string) (string, error) {
 
 func GweiToEth(amount string) (string, error) {
 	return ParseIntegerStringToDecimalString(amount, "9")
+}
+
+func ContractIntegerBytesToString(bytes []byte) string {
+	return new(big.Int).SetBytes(bytes).String()
+}
+
+func ContractStringBytesToString(bytes []byte) string {
+	return string(bytes)
+}
+
+func ContractAddressBytes(bytes []byte) common.Address {
+	return common.BytesToAddress(bytes)
 }

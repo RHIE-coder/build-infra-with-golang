@@ -35,115 +35,71 @@ func main() {
 		panic(err)
 	}
 
-	dispatcher := demo.NewSwapDispatcher(
-		client,
-		signer,
-		demo.NewERC20Contract().SetAddress(demo.LOCAL_POINT_ADDR),
-		demo.NewERC20Contract().SetAddress(demo.LOCAL_TOKEN_ADDR),
-		demo.NewERC20AtomicSwapContract().SetAddress(demo.LOCAL_ATOMICSWAP_POINT_ADDR),
-		demo.NewERC20AtomicSwapContract().SetAddress(demo.LOCAL_ATOMICSWAP_TOKEN_ADDR),
-	)
-	// pointSwap := dispatcher.GetERC20Swap(demo.POINT_SWAP)
-	// fmt.Println(pointSwap)
-	// abiJson, err := abi.JSON(strings.NewReader(demo.ERC20ATOMICSWAP_ABI))
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// inputBytes, err := abiJson.Pack("symbol")
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// contract := common.HexToAddress(demo.LOCAL_ATOMICSWAP_POINT_ADDR)
-	// symbolMsg := ethereum.CallMsg{
-	// 	To:   &contract,
-	// 	Data: inputBytes,
-	// }
-	// symbolBytes, err := client.CallContract(symbolMsg)
-	// fmt.Println(string(symbolBytes))
+	txRequester := demo.NewTransactionRequester(client)
 
-	prepare(dispatcher)
-	checkBalanceOf(dispatcher)
-	// transferOwnerPointToUser(dispatcher)
-	// allowToPointContract(dispatcher)
-	// allowToTokenContract(dispatcher)
-	// checkAllowance(dispatcher)
-	// createSwapPoint(dispatcher)
-	// checkTxToKnowSecretHash(dispatcher) // Optional Now
-	// redeemPoint(dispatcher)
-	// checkTxToKnowSecret(dispatcher) // Optional Now
-	// redeemToken(dispatcher)
+	prepare(txRequester)
+	checkBalanceOf(txRequester)
+	// transferOwnerPointToUser(txRequester)
+	// allowToPointContract(txRequester)
+	// allowToTokenContract(txRequester)
+	// checkAllowance(txRequester)
+	// createSwapPoint(txRequester)
+	// checkTxToKnowSecretHash(txRequester) // Optional Now
+	// redeemPoint(txRequester)
+	// checkTxToKnowSecret(txRequester) // Optional Now
+	// redeemToken(txRequester)
 }
 
-func prepare(dispatcher *demo.SwapDispatcher) {
+func prepare(txRequester *demo.TransactionRequester) {
 	log.Println("   ---   prepare   ---")
-	dispatcher.SetMetadataByCall(demo.POINT)
-	dispatcher.SetMetadataByCall(demo.TOKEN)
-	dispatcher.SetMetadataByCall(demo.POINT_SWAP)
-	dispatcher.SetMetadataByCall(demo.TOKEN_SWAP)
-	log.Println(dispatcher.GetERC20(demo.POINT).GetMetaData())
-	log.Println(dispatcher.GetERC20(demo.TOKEN).GetMetaData())
-	log.Println(dispatcher.GetERC20Swap(demo.POINT_SWAP).GetMetaData())
-	log.Println(dispatcher.GetERC20Swap(demo.TOKEN_SWAP).GetMetaData())
+
 }
 
-func checkBalanceOf(dispatcher *demo.SwapDispatcher) {
+func checkBalanceOf(txRequester *demo.TransactionRequester) {
 	log.Println("   ---   checkBalanceOf   ---")
-	point := demo.NewERC20Contract()
-	// token := demo.NewERC20Contract(demo.LOCAL_TOKEN_ADDR)
-	// pointSwap := demo.NewERC20Contract(LOCAL_ATOMICSWAP_POINT_ADDR)
-	// tokenSwap := demo.NewERC20Contract(LOCAL_ATOMICSWAP_TOKEN_ADDR)
-
-	balanceOfMsg, err := point.BalanceOf(ADMIN_DEPLOYER)
-	if err != nil {
-		panic(err)
-	}
-
-	pointAdmin, err := dispatcher.GetERC20(demo.POINT).BalanceOf(ADMIN_DEPLOYER)
-	pointUser, err := dispatcher.GetERC20(demo.TOKEN).BalanceOf(USER)
-	tokenAdmin, err := dispatcher.GetERC20(demo.POINT_SWAP).BalanceOf(ADMIN_DEPLOYER)
-	tokenUser, err := dispatcher.GetERC20(demo.TOKEN_SWAP).BalanceOf(USER)
 
 }
 
-func transferOwnerPointToUser(dispatcher *demo.SwapDispatcher) { // faucet
+func transferOwnerPointToUser(txRequester *demo.TransactionRequester) { // faucet
 
 	log.Println("   ---   transferOwnerPointToUser   ---")
+
 }
 
-func allowToPointContract(dispatcher *demo.SwapDispatcher) {
+func allowToPointContract(txRequester *demo.TransactionRequester) {
 
 	log.Println("   ---   allowToPointContract   ---")
 }
 
-func allowToTokenContract(dispatcher *demo.SwapDispatcher) {
+func allowToTokenContract(txRequester *demo.TransactionRequester) {
 
 	log.Println("   ---   allowToTokenContract   ---")
 }
 
-func checkAllowance(dispatcher *demo.SwapDispatcher) {
+func checkAllowance(txRequester *demo.TransactionRequester) {
 
 	log.Println("   ---   checkAllowance   ---")
 }
 
-func createSwapPoint(dispatcher *demo.SwapDispatcher) {
+func createSwapPoint(txRequester *demo.TransactionRequester) {
 
 	log.Println("   ---   createSwapPoint   ---")
 }
 
-func checkTxToKnowSecretHash(dispatcher *demo.SwapDispatcher) {
+func checkTxToKnowSecretHash(txRequester *demo.TransactionRequester) {
 	// Optional Now
 }
 
-func redeemPoint(dispatcher *demo.SwapDispatcher) {
+func redeemPoint(txRequester *demo.TransactionRequester) {
 
 	log.Println("   ---   redeemPoint   ---")
 }
 
-func checkTxToKnowSecret(dispatcher *demo.SwapDispatcher) {
+func checkTxToKnowSecret(txRequester *demo.TransactionRequester) {
 	// Optional Now
 }
 
-func redeemToken(dispatcher *demo.SwapDispatcher) {
+func redeemToken(txRequester *demo.TransactionRequester) {
 
 	log.Println("   ---   redeemToken   ---")
 }

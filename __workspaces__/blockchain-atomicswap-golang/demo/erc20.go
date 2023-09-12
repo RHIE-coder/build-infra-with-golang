@@ -10,19 +10,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-type ERC20 interface {
-	Name() string
-	GetName() string
-	Symbol() (string, error)
-	GetSymbol() string
-	Decimals() (string, error)
-	GetDecimals() string
-	Approve(string, string) (bool, error)
-	Allowance(string, string) (string, error)
-	Transfer(string, string) (bool, error)
-	ContractAddress() string
-}
-
 type ERC20Contract struct {
 	contractAddress common.Address
 	abi             abi.ABI
@@ -38,12 +25,16 @@ func NewERC20Contract() *ERC20Contract {
 	}
 }
 
-func (erc20 *ERC20Contract) SetAddress(contractAddress string) *ERC20Contract {
+func (erc20 *ERC20Contract) SetAddressByString(contractAddress string) *ERC20Contract {
 	erc20.contractAddress = common.HexToAddress(contractAddress)
 	return erc20
 }
 
-func (erc20 *ERC20Contract) GetAddress() string {
+func (erc20 *ERC20Contract) GetAddress() common.Address {
+	return erc20.contractAddress
+}
+
+func (erc20 *ERC20Contract) GetAddressAsString() string {
 	return erc20.contractAddress.Hex()
 }
 

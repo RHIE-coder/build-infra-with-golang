@@ -4,8 +4,10 @@ import (
 	"crypto/ecdsa"
 	"encoding/hex"
 	"fmt"
+	"math/big"
 	"strings"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 )
@@ -54,10 +56,14 @@ func (account *EthereumAccount) GetPublicKey() string {
 	return hex.EncodeToString(crypto.FromECDSAPub(account.publicKey))
 }
 
-func (account *EthereumAccount) SignTx(tx EIP1559Tx) (*types.Transaction, error) {
+func (account *EthereumAccount) GetAddress() common.Address {
+	return crypto.PubkeyToAddress(*account.publicKey)
+}
+
+func (account *EthereumAccount) Sign(chainid *big.Int, tx *types.Transaction) (*types.Transaction, error) {
 	signedTx, err := types.SignTx(
-		tx.GetTxForSigning(),
-		types.NewCancunSigner(tx.ChainID),
+		tx,
+		types.NewCancunSigner(chainid),
 		account.privateKey,
 	)
 
