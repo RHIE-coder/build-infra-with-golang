@@ -1,7 +1,9 @@
 package demo
 
 import (
+	"encoding/hex"
 	"fmt"
+	"math/big"
 	"strings"
 
 	"github.com/ethereum/go-ethereum"
@@ -25,10 +27,10 @@ import (
 
 /* Swap */
 type Swap struct {
-	PoolInitiatorAddress string // sender address
-	ReceiverAddress      string // receiver address
-	SecretHash           string // keccack256 algorithm
-	Amount               string // Amount = amount * decimals
+	PoolInitiatorAddress string `json:"sender"`     // sender address
+	ReceiverAddress      string `json:"receiver"`   // receiver address
+	SecretHash           string `json:"secretHash"` // keccack256 algorithm
+	Amount               string `json:"amount"`     // Amount = amount * decimals
 }
 
 /* enum Stage */
@@ -71,6 +73,11 @@ func NewERC20AtomicSwapContract() *ERC20AtomicSwapContract {
 	return &ERC20AtomicSwapContract{
 		abi: abiJson,
 	}
+}
+
+func (atomicSwap *ERC20AtomicSwapContract) SetAddress(contractAddress common.Address) *ERC20AtomicSwapContract {
+	atomicSwap.contractAddress = contractAddress
+	return atomicSwap
 }
 
 func (atomicSwap *ERC20AtomicSwapContract) SetAddressByString(contractAddress string) *ERC20AtomicSwapContract {
@@ -150,6 +157,99 @@ func (atomicSwap *ERC20AtomicSwapContract) AddressOfTargetContract() (*ethereum.
 	return &callMsg, nil
 }
 
-func (atomicSwap *ERC20AtomicSwapContract) CreateSwap(initiator string, receiver string, secretHash string, amount string) {
+func (atomicSwap *ERC20AtomicSwapContract) CreateSwap(initiator string, receiver string, secretHash string, amount string) (*ethereum.CallMsg, error) {
+	methodName := "createSwap"
+	biAmount, ok := new(big.Int).SetString(amount, 10)
+	if !ok {
+		return nil, fmt.Errorf("fail to parse the amount")
+	}
+	secretHashBytes, err := GetSecretHashByte32From(secretHash)
+	if err != nil {
+		panic(err)
+	}
 
+	inputBytes, err := atomicSwap.abi.Pack(methodName,
+		common.HexToAddress(initiator),
+		common.HexToAddress(receiver),
+		secretHashBytes,
+		biAmount,
+	)
+	fmt.Println(hex.EncodeToString(inputBytes))
+
+	if err != nil {
+		return nil, fmt.Errorf("fail to pack the '%s' method: %s", methodName, err.Error())
+	}
+	callMsg := ethereum.CallMsg{
+		To:   &atomicSwap.contractAddress,
+		Data: inputBytes,
+	}
+	return &callMsg, nil
+}
+
+func (atomicSwap *ERC20AtomicSwapContract) GetSwap(secretHash string) (*ethereum.CallMsg, error) {
+	methodName := "getSwap"
+	secretHashBytes, err := GetSecretHashByte32From(secretHash)
+	if err != nil {
+		panic(err)
+	}
+	inputBytes, err := atomicSwap.abi.Pack(methodName, secretHashBytes)
+	if err != nil {
+		return nil, fmt.Errorf("fail to pack the '%s' method: %s", methodName, err.Error())
+	}
+	callMsg := ethereum.CallMsg{
+		To:   &atomicSwap.contractAddress,
+		Data: inputBytes,
+	}
+	return &callMsg, nil
+}
+
+func (atomicSwap *ERC20AtomicSwapContract) GetSwapStatus(secretHash string) (*ethereum.CallMsg, error) {
+	methodName := "getSwapStatus"
+	secretHashBytes, err := GetSecretHashByte32From(secretHash)
+	if err != nil {
+		panic(err)
+	}
+	inputBytes, err := atomicSwap.abi.Pack(methodName, secretHashBytes)
+	if err != nil {
+		return nil, fmt.Errorf("fail to pack the '%s' method", methodName)
+	}
+	callMsg := ethereum.CallMsg{
+		To:   &atomicSwap.contractAddress,
+		Data: inputBytes,
+	}
+	return &callMsg, nil
+}
+
+func (atomicSwap *ERC20AtomicSwapContract) IsRedeemed(secretHash string) (*ethereum.CallMsg, error) {
+	methodName := "isRedeemed"
+	secretHashBytes, err := GetSecretHashByte32From(secretHash)
+	if err != nil {
+		panic(err)
+	}
+	inputBytes, err := atomicSwap.abi.Pack(methodName, secretHashBytes)
+	if err != nil {
+		return nil, fmt.Errorf("fail to pack the '%s' method", methodName)
+	}
+	callMsg := ethereum.CallMsg{
+		To:   &atomicSwap.contractAddress,
+		Data: inputBytes,
+	}
+	return &callMsg, nil
+}
+
+func (atomicSwap *ERC20AtomicSwapContract) IsRefunded(secretHash string) (*ethereum.CallMsg, error) {
+	methodName := "isRefunded"
+	secretHashBytes, err := GetSecretHashByte32From(secretHash)
+	if err != nil {
+		panic(err)
+	}
+	inputBytes, err := atomicSwap.abi.Pack(methodName, secretHashBytes)
+	if err != nil {
+		return nil, fmt.Errorf("fail to pack the '%s' method", methodName)
+	}
+	callMsg := ethereum.CallMsg{
+		To:   &atomicSwap.contractAddress,
+		Data: inputBytes,
+	}
+	return &callMsg, nil
 }

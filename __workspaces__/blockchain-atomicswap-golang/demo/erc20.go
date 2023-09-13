@@ -25,6 +25,11 @@ func NewERC20Contract() *ERC20Contract {
 	}
 }
 
+func (erc20 *ERC20Contract) SetAddress(contractAddress common.Address) *ERC20Contract {
+	erc20.contractAddress = contractAddress
+	return erc20
+}
+
 func (erc20 *ERC20Contract) SetAddressByString(contractAddress string) *ERC20Contract {
 	erc20.contractAddress = common.HexToAddress(contractAddress)
 	return erc20

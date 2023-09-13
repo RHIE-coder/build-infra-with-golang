@@ -1,6 +1,7 @@
 package demo
 
 import (
+	"encoding/hex"
 	"fmt"
 	"math/big"
 	"strconv"
@@ -72,4 +73,34 @@ func ContractStringBytesToString(bytes []byte) string {
 
 func ContractAddressBytes(bytes []byte) common.Address {
 	return common.BytesToAddress(bytes)
+}
+
+func HexStringToBytes(hexString string) ([]byte, error) {
+	return hex.DecodeString(hexString)
+}
+
+func HasHexPrefix(hexString string) bool {
+	const prefix = "0x"
+	return strings.HasPrefix(hexString, prefix)
+}
+
+func RemoveHexPrefix(hexString string) (string, error) {
+	const prefix = "0x"
+
+	if !strings.HasPrefix(hexString, prefix) {
+		return hexString, fmt.Errorf("the hex string of '%s' doesn't start with %s", hexString, prefix)
+	}
+
+	parsed := strings.TrimPrefix(hexString, prefix)
+	return parsed, nil
+}
+
+func AddHexPrefix(hexString string) (string, error) {
+	const prefix = "0x"
+
+	if strings.HasPrefix(hexString, prefix) {
+		return hexString, fmt.Errorf("the hex string of '%s' already has %s as prefix", hexString, prefix)
+	}
+
+	return fmt.Sprintf("%s%s", prefix, hexString), nil
 }

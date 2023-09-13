@@ -69,6 +69,7 @@ contract ERC20AtomicSwap is Ownable{
     function addressOfTargetContract() public view returns(address) {
         return contractAddress;
     }
+
     /**
      * @dev create ERC20 swap info.
      */
@@ -81,7 +82,7 @@ contract ERC20AtomicSwap is Ownable{
 
         uint256 allowedAmount = IERC20(contractAddress).allowance(initiator_, address(this));
         if(allowedAmount == 0 || allowedAmount < amount_) {
-            revert InsufficientAllowance(contractAddress, initiator_, address(this), amount_, allowedAmount);
+            revert("insufficient allowance");
         }
 
         require(_swapStatus[secretHash_] == Stage.INVALID, "hash is already exists");

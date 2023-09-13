@@ -36,6 +36,9 @@ func (txRequester *TransactionRequester) SignTransaction(msg ethereum.CallMsg) (
 	if signer == nil {
 		return nil, fmt.Errorf("the signer is not assigned")
 	}
+	from := signer.GetAddress()
+
+	msg.From = from
 
 	chainId, err := rpc.ChainID(context.Background())
 	if err != nil {
