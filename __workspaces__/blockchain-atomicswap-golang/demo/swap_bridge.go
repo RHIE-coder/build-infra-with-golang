@@ -420,20 +420,30 @@ func (swap *SwapBridge) GetSwap(contractType ContractType, secretHash string) (s
 	} else {
 		return "", fmt.Errorf("unsupported contract type(should be erc20AtomicSwap)")
 	}
-	swapBytes, err := swap.txRequester.Call(*msg)
+	swapBytesByContract, err := swap.txRequester.Call(*msg)
 	if err != nil {
 		return "", fmt.Errorf(err.Error())
 	}
 	fmt.Println("--------")
-	// Create an instance of the struct
-	var myData Swap
-
-	// Unmarshal the JSON data from the byte slice into the struct
-	if err := json.Unmarshal(swapBytes, &myData); err != nil {
-		fmt.Println("Error:", err)
+	unpackedSwapData, err := swap.pointSwap.abi.Unpack("getSwap", swapBytesByContract)
+	if err != nil {
+		return "", fmt.Errorf(err.Error())
 	}
-	fmt.Println(swapBytes)
-	fmt.Println(myData)
+	fmt.Println(unpackedSwapData)
+
+	swapBytes, err := json.Marshal(unpackedSwapData[0])
+	if err != nil {
+		panic(err)
+	}
+
+	var jsonData interface{}
+
+	if err := json.Unmarshal(swapBytes, &jsonData); err != nil {
+		panic(err)
+	}
+
+	fmt.Println(jsonData)
+
 	fmt.Println("--------")
 	return "", nil
 }
